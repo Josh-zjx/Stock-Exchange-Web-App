@@ -9,6 +9,7 @@ import { SearchPageComponent } from './components/search-page/search-page.compon
 import { WatchListPageComponent } from './components/watch-list-page/watch-list-page.component';
 import { PortfolioPageComponent } from './components/portfolio-page/portfolio-page.component';
 import { DetailsPageComponent } from './components/details-page/details-page.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { DetailsPageComponent } from './components/details-page/details-page.com
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]
