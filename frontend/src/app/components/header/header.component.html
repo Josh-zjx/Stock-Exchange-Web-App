@@ -5,11 +5,12 @@
     </button>
     <div class="collapse navbar-collapse ml-auto" id="navbarNavAltMarkup">
       <div class="navbar-nav ml-auto">
-          <div><a class="nav-link active ml-auto" href="">Search <span class="sr-only ml-auto">(current)</span></a>
-          </div>
-        <div><a class="nav-link ml-auto" href="watchlist">Watchlist</a></div>
-        <div><a class="nav-link ml-auto" href="portfolio">Portfolio</a></div>
-        
+          <!--<div *ngFor="let name of namelist" [class.active]="name === selectedSwitch"><a  routerLink="/heroes-list" routerLinkActive="activebutton" class="nav-link ml-auto" href="">{{name}}</a>
+          </div>-->
+          <a class="nav-link ml-auto" routerLink="/" routerLinkActive="activebutton">Search</a>
+          <a class="nav-link ml-auto" routerLink="/watchlist" routerLinkActive="activebutton">Watchlist</a>
+          <a class="nav-link ml-auto" routerLink="/portfolio" routerLinkActive="activebutton">Portoflio</a>
+          
       </div>
     </div>
   </nav>

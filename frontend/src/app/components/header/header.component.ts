@@ -7,8 +7,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
+  //namelist : string[] = ["Search","Watchlist","Portfolio"];
   constructor() { }
-
+  //selectedSwitch:String="";
+  //onSelected(name:string):void{
+  //this.selectedSwitch=name;
+  //}
   ngOnInit(): void {
   }
 
