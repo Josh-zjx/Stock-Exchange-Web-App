@@ -27,5 +27,9 @@ export class WatchListPageComponent implements OnInit {
   
   ngOnInit(): void {
   }
+  getWatchList():void{
+    this.dataservice.getwatchlist().subscribe(watchlist=>this.wachlistitems=watchlist)
+  }
+
 
 }

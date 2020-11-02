@@ -19,9 +19,29 @@ app.get('/query',(req,res)=>{
     if(type=="daily"){
         options.path = `/tiingo/daily/${ticker}?token=${stock_token}`;
         
+        https.get(options,(response)=>{
+            var body = '';
+            response.on('data', function(data) {
+                body += data;
+            });
+            response.on('end',()=>{
+                console.log(body);
+                res.send(body);
+            });
+        });
     }
     else if(type=="iex"){
         options.path = `/iex/${ticker}?token=${stock_token}`;
+        https.get(options,(response)=>{
+            var body = '';
+            response.on('data', function(data) {
+                body += data;
+            });
+            response.on('end',()=>{
+                console.log(body);
+                res.send(body);
+            }); 
+        });
     }
     else if(type=="dac"){
         var date = new Date();
@@ -33,6 +53,16 @@ app.get('/query',(req,res)=>{
         start_date +="-";
         start_date +=date.getDate().toString();
         options.path = `/iex/${ticker}/prices?startDate=${start_date}&resampleFreq=5min&token=${stock_token}`;
+        https.get(options,(response)=>{
+            var body = '';
+            response.on('data', function(data) {
+                body += data;
+            });
+            response.on('end',()=>{
+                console.log(body);
+                res.send(body);
+            });
+        });
     }
     else if(type=="hist"){
         var date = new Date();
@@ -44,30 +74,41 @@ app.get('/query',(req,res)=>{
         start_date +=date.getDate().toString();
 
         options.path = `/tiingo/daily/${ticker}/prices?startDate=${start_date}&resampleFreq=daily&token=${stock_token}`;
+        https.get(options,(response)=>{
+            var body = '';
+            response.on('data', function(data) {
+                body += data;
+            });
+            response.on('end',()=>{
+                console.log(body);
+                res.send(body);
+            });
+        });
     }
     else if(type=="news"){
-
+        options.host="newsapi.org";
+        options.path=`/v2/everything?apiKey=${news_token}&q=${ticker}`;
+        https.get(options,(response)=>{
+            var body = '';
+            response.on('data', function(data) {
+                body += data;
+            });
+            response.on('end',()=>{
+                console.log(body);
+                res.send(body);
+            }); 
+        });
     }
     else if(type=="ac")
     {
 
     }
     else{
-        res.send("Unrecognized Token")
+        res.send("Unrecognized Token");
         return 0;
     }
 
-    https.get(options,(response)=>{
-        var body = '';
-        response.on('data', function(data) {
-            body += data;
-        });
-        response.on('end',()=>{
-            console.log(body);
-            res.send(body);
-        })
-        
-    })
+    
     
     
 

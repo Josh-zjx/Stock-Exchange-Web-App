@@ -16,6 +16,7 @@ import { DetaildataService } from './services/detaildata.service';
 import { RemotedataService } from './services/remotedata.service';
 import { LocaldataService } from './services/localdata.service';
 import { WatchListItemComponent} from './components/watch-list-item/watch-list-item.component'
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { WatchListItemComponent} from './components/watch-list-item/watch-list-i
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule
+    NgbModule,
+    HttpClientModule
   ],
   providers: [
     WatchlistdataService,
