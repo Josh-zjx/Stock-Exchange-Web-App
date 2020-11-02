@@ -9,7 +9,7 @@ const routes: Routes = [
   {path: '',component:SearchPageComponent},
   {path: 'portfolio',component:PortfolioPageComponent},
   {path: 'watchlist',component:WatchListPageComponent},
-  {path: 'details/*',component:DetailsPageComponent}
+  {path: 'details/:ticker',component:DetailsPageComponent}
 ];
 
 @NgModule({

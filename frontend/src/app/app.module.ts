@@ -10,6 +10,12 @@ import { WatchListPageComponent } from './components/watch-list-page/watch-list-
 import { PortfolioPageComponent } from './components/portfolio-page/portfolio-page.component';
 import { DetailsPageComponent } from './components/details-page/details-page.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { WatchlistdataService } from './services/watchlistdata.service';
+import { PortfoliodataService } from './services/portfoliodata.service';
+import { DetaildataService } from './services/detaildata.service';
+import { RemotedataService } from './services/remotedata.service';
+import { LocaldataService } from './services/localdata.service';
+import { WatchListItemComponent} from './components/watch-list-item/watch-list-item.component'
 
 @NgModule({
   declarations: [
@@ -19,14 +25,21 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     SearchPageComponent,
     WatchListPageComponent,
     PortfolioPageComponent,
-    DetailsPageComponent
+    DetailsPageComponent,
+    WatchListItemComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgbModule
   ],
-  providers: [],
+  providers: [
+    WatchlistdataService,
+    PortfoliodataService,
+    DetaildataService,
+    RemotedataService,
+    LocaldataService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

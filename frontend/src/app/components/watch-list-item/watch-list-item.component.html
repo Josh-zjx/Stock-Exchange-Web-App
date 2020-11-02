@@ -1,0 +1,15 @@
+<div class="card" routerLink="/details/{{item.ticker}}">
+    <div class="card-body" style="padding:0px 14px 14px 14px">
+      <div class="row" ><button type="button" class="close ml-auto" aria-label="Close" (click)="delete(item)">
+        <span aria-hidden="true">&times;</span>
+      </button></div>
+        <div class="row">
+            <div class="col" style="text-align: left;"><h3>{{item.ticker}}</h3></div>
+            <div class="col" style="text-align: right;"><h3>{{item.currentprice}}</h3></div>
+        </div>
+        <div class="row">
+            <div class="col" style="text-align: left;">{{item.name}}</div>
+            <div class="col" style="text-align: right;">{{item.change}} ({{item.changepercent}})</div>
+        </div>
+    </div>
+</div>
