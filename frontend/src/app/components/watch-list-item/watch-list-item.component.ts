@@ -1,5 +1,6 @@
-import { Component, OnInit,Input,Output} from '@angular/core';
+import { Component, OnInit,Input,Output,EventEmitter} from '@angular/core';
 import {watchlistitem} from '../../models/watchlistdata';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-watch-list-item',
@@ -8,11 +9,15 @@ import {watchlistitem} from '../../models/watchlistdata';
 })
 export class WatchListItemComponent implements OnInit {
   @Input() item:watchlistitem;
-  constructor() { }
+  @Output() deleteitem=new EventEmitter();
+  constructor(private router:Router) { }
 
   ngOnInit(): void {
   }
   delete(item:watchlistitem){
-
+    this.deleteitem.emit(item.ticker);
+  }
+  navidetail(item:watchlistitem):void{
+    this.router.navigateByUrl("/details/"+item.ticker)
   }
 }

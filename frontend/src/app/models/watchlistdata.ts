@@ -5,3 +5,6 @@ export interface watchlistitem {
     currentprice:number;
     changepercent:number;
   }
+export interface localwatchlist {
+    ticker:string;
+}

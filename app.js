@@ -107,15 +107,9 @@ app.get('/query',(req,res)=>{
         res.send("Unrecognized Token");
         return 0;
     }
-
-    
-    
-    
-
-
 })
 app.get('*',(req,res)=>{
-    fs.readFile("search.html",(err,data)=>{
+    fs.readFile("./frontend/src/index.html",(err,data)=>{
         if(err)
         {
             console.log("Search File read error");

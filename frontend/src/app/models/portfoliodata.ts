@@ -8,3 +8,8 @@ export interface portfolioitem {
     currentprice:number;
     marketshare:number;
   }
+  export interface localportfolio {
+    ticker:string;
+    cost:number;
+    share:number;
+}

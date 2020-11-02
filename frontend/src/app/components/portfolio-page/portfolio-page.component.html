@@ -1,1 +1,14 @@
-<p>portfolio-page works!</p>
+<div class="container">
+    <div class="row">
+        <h1>My Portfolio</h1>
+    </div>
+    <!--<div *ngFor="let item of watchlistitems">
+        <p>Name:{{item.name}} </p>
+        <p>Ticker:{{item.ticker}} </p>
+        <p>price:{{item.currentprice}} </p>
+        <p>change:{{item.change}} </p>
+        <p>cp:{{item.changepercent}} </p>
+    </div>
+    -->
+    <app-watch-list-item *ngFor="let item of watchlistitems" [item]="item" (deleteitem)="deleteitem($event.name)"></app-watch-list-item>
+</div>

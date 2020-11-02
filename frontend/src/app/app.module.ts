@@ -17,6 +17,7 @@ import { RemotedataService } from './services/remotedata.service';
 import { LocaldataService } from './services/localdata.service';
 import { WatchListItemComponent} from './components/watch-list-item/watch-list-item.component'
 import { HttpClientModule } from '@angular/common/http';
+import { PortfolioPageItemComponent } from './components/portfolio-page-item/portfolio-page-item.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { HttpClientModule } from '@angular/common/http';
     WatchListPageComponent,
     PortfolioPageComponent,
     DetailsPageComponent,
-    WatchListItemComponent
+    WatchListItemComponent,
+    PortfolioPageItemComponent
   ],
   imports: [
     BrowserModule,
