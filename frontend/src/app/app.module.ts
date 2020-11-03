@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -18,6 +18,9 @@ import { LocaldataService } from './services/localdata.service';
 import { WatchListItemComponent} from './components/watch-list-item/watch-list-item.component'
 import { HttpClientModule } from '@angular/common/http';
 import { PortfolioPageItemComponent } from './components/portfolio-page-item/portfolio-page-item.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BuymodalComponent } from './components/buymodal/buymodal.component';
+import { SellmodalComponent } from './components/sellmodal/sellmodal.component';
 
 @NgModule({
   declarations: [
@@ -29,13 +32,17 @@ import { PortfolioPageItemComponent } from './components/portfolio-page-item/por
     PortfolioPageComponent,
     DetailsPageComponent,
     WatchListItemComponent,
-    PortfolioPageItemComponent
+    PortfolioPageItemComponent,
+    BuymodalComponent,
+    SellmodalComponent
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     AppRoutingModule,
     NgbModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule
   ],
   providers: [
     WatchlistdataService,

@@ -1,17 +1,51 @@
-<div class="container">
-    <div id="closeablecard" class="card card-hover-shadow mt-4">
-      <div class="card-header bg-transparent border-bottom-0">
+<div class="container" style="font-size:20px">
+  
+    <div class="card card-hover-shadow mt-4">
+      
+      <div class="card-header"  >
+        <h1 class="mt-auto mb-auto">
+          {{item.ticker}}
+          <small class="text-muted">{{item.name}}</small>
+        </h1>
+      </div>
+      <div class="card-body" >
+        <div class="row">
+        <div class="col ml-auto">
+          <ul class="list-group">
+            <li class="list-group-item border-0 d-flex justify-content-between ">
+              <span>Quantity:</span><span>{{item.Quantity}}</span>
+              
+            </li>
+            <li class="list-group-item border-0 d-flex justify-content-between lh-condensed">
+              <span>Avg. Cost/Share:</span><span>{{item.averagecost}}</span>
+            </li>
+            <li class="list-group-item border-0 d-flex justify-content-between lh-condensed">
+              <span>Total Cost:</span><span>{{item.totalcost}}</span>
+            </li>
+          </ul>
+         
+        </div>
         
+        
+        <div class="col mr-auto">
+          <ul class="list-group">
+            <li class="list-group-item border-0 d-flex justify-content-between ">
+              <span>Change:</span><span>{{item.change}}</span>
+            </li>
+            <li class="list-group-item border-0 d-flex justify-content-between lh-condensed">
+              <span>Current Price:</span><span>{{item.currentprice}}</span>
+            </li>
+            <li class="list-group-item border-0 d-flex justify-content-between lh-condensed">
+              <span>Market Value:</span><span>{{item.marketvalue}}</span>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="card-body mt-n5"(click)="navidetail(item)">
-        <div class="row" style="padding-top:10px">
-          <div class="col" style="text-align: left;"><h3>{{item.ticker}}</h3></div>
-          <div class="col" style="text-align: right;"><h3>{{item.currentprice}}</h3></div>
       </div>
-      <div class="row">
-          <div class="col" style="text-align: left;">{{item.name}}</div>
-          <div class="col" style="text-align: right;">{{item.change}} ({{item.changepercent}})</div>
-      </div>
+      <div class="card-footer text-right">
+          <div class="ml-auto">
+            <button class="btn btn-md btn-primary" (click)="openbuy()">Buy</button><button class="btn btn-md btn-danger" (click)="opensell()">Sell</button>
+          </div>
       </div>
     </div>
-  </div>
+</div>

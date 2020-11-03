@@ -10,7 +10,6 @@ import { WatchListItemComponent } from '../components/watch-list-item/watch-list
   providedIn: 'root'
 })
 export class WatchlistdataService {
-
   constructor(private localOP:LocaldataService,private remoteOP:RemotedataService) {
     localOP.initializelocal("watchlist");
     this.addwatchlist("AAPL");

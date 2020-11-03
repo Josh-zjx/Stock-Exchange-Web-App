@@ -6,7 +6,7 @@ export interface portfolioitem {
     totalcost:number;
     change:number;
     currentprice:number;
-    marketshare:number;
+    marketvalue:number;
   }
   export interface localportfolio {
     ticker:string;
