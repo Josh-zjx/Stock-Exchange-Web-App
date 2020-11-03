@@ -12,5 +12,5 @@
         <p>cp:{{item.changepercent}} </p>
     </div>
     -->
-    <app-portfolio-page-item *ngFor="let item of Portfolio" [item]="item" ></app-portfolio-page-item>
+    <app-portfolio-page-item *ngFor="let item of Portfolio" [item]="item" (buyemitter)="buy($event)" (sellemitter)="sell($event)"  ></app-portfolio-page-item>
 </div>

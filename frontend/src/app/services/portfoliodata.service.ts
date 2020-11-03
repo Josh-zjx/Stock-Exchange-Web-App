@@ -3,7 +3,7 @@ import { Observable, of,forkJoin} from 'rxjs';
 import { LocaldataService } from './localdata.service'
 import { RemotedataService } from './remotedata.service'
 import {localportfolio,portfolioitem} from '../models/portfoliodata';
-
+import { order } from '../models/portfoliodata'
 @Injectable({
   providedIn: 'root'
 })
@@ -12,26 +12,30 @@ export class PortfoliodataService {
   constructor(private localOP:LocaldataService,private remoteOP:RemotedataService) {
     this.localOP.setlocal("portfolio","{}");
     this.portfoliodata={};
-    this.buy("AAPL",10,500);
+    this.buy("AAPL",10,50);
+    this.buy("IBM",10,50);
+    this.buy("MSFT",10,50);
 
   }
-  buy(name:string,amount:number,price:number):void{
+  buy(name:string, amount:number,price:number):void{
+    //console.log(`buying ${name} in ${amount} for ${price} each`)
     if(this.inportfolio(name))
     {
-      this.portfoliodata[name].share+=amount;
-      this.portfoliodata[name].cost+=price;
+      //console.log(typeof(this.portfoliodata[name].share))
+      //console.log(typeof(amount))
+      this.portfoliodata[name].share=this.portfoliodata[name].share+amount;
+      this.portfoliodata[name].cost=this.portfoliodata[name].cost+price*amount;
     }
     else{
-      this.portfoliodata[name]={};
-      this.portfoliodata[name].ticker=name;
-      this.portfoliodata[name].share=amount;
-      this.portfoliodata[name].cost=price;
+      var newport:localportfolio={ticker:name,share:amount,cost:price*amount}
+      this.portfoliodata[name]=newport;
     }
+    //console.log(this.portfoliodata[name].share)
     this.localOP.setlocal("portfolio",JSON.stringify(this.portfoliodata));
   }
   sell(name:string,amount:number,price:number):void{
     this.portfoliodata[name].share-=amount;
-    this.portfoliodata[name].cost-=price;
+    this.portfoliodata[name].cost-=price*amount;
     if(this.portfoliodata[name].share==0)
     {
       delete this.portfoliodata[name];
@@ -51,6 +55,7 @@ export class PortfoliodataService {
     this.portfoliodata=JSON.parse(rawstring);
   }
   renderportfolio():portfolioitem[]{
+    console.log("rendering")
     var portfolioitems:portfolioitem[]=[];
     var tmp={};
     var list:Observable<object>[]=[];

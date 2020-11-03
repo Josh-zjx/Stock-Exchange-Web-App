@@ -13,3 +13,8 @@ export interface portfolioitem {
     cost:number;
     share:number;
 }
+export interface order{
+  name:string;
+  amount:number;
+  price:number;
+}
