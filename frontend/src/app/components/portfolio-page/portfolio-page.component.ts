@@ -33,9 +33,14 @@ export class PortfolioPageComponent implements OnInit {
   constructor(private dataservice:PortfoliodataService) { }
 
   ngOnInit(): void {
+    this.getportfolio();
   }
   buy(){}
   sell(){}
+  getportfolio(){
+    this.Portfolio=this.dataservice.renderportfolio();
+    console.log(this.Portfolio)
+  }
 
 
 }
