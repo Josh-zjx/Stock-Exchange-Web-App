@@ -21,6 +21,9 @@ import { PortfolioPageItemComponent } from './components/portfolio-page-item/por
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BuymodalComponent } from './components/buymodal/buymodal.component';
 import { SellmodalComponent } from './components/sellmodal/sellmodal.component';
+import { DetailSummaryComponent } from './components/detail-summary/detail-summary.component';
+import { DetailNewsComponent } from './components/detail-news/detail-news.component';
+import { DetailChartComponent } from './components/detail-chart/detail-chart.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +37,10 @@ import { SellmodalComponent } from './components/sellmodal/sellmodal.component';
     WatchListItemComponent,
     PortfolioPageItemComponent,
     BuymodalComponent,
-    SellmodalComponent
+    SellmodalComponent,
+    DetailSummaryComponent,
+    DetailNewsComponent,
+    DetailChartComponent
   ],
   imports: [
     FormsModule,

@@ -9,8 +9,8 @@
             
             <div class="wrap">
                 <div class="search">
-                   <input type="text" class="searchTerm" placeholder="What are you looking for?">
-                   <button type="submit" class="searchButton">
+                   <input type="text" [(ngModel)]="ticker" class="searchTerm" placeholder="What are you looking for?">
+                   <button type="submit" class="searchButton" (click)="navi()">
                      <i class="fa fa-search"></i>
                   </button>
                 </div>
