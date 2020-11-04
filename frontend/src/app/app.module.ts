@@ -24,6 +24,7 @@ import { SellmodalComponent } from './components/sellmodal/sellmodal.component';
 import { DetailSummaryComponent } from './components/detail-summary/detail-summary.component';
 import { DetailNewsComponent } from './components/detail-news/detail-news.component';
 import { DetailChartComponent } from './components/detail-chart/detail-chart.component';
+import {MatTabsModule} from '@angular/material/tabs';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { DetailChartComponent } from './components/detail-chart/detail-chart.com
     AppRoutingModule,
     NgbModule,
     HttpClientModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatTabsModule
   ],
   providers: [
     WatchlistdataService,

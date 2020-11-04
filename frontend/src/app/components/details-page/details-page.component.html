@@ -1,1 +1,31 @@
-<p>details-page works!</p>
+
+<div class="container">
+    <div class="row">
+        <div class="col ml-auto mr-auto">
+            <ul class="list-group">
+                <li class="list-group-item border-0 d-flex justify-content-between">
+                    <span><h1>{{this.ticker}}</h1></span><span><h1>{{this.price}}</h1></span>
+                </li>
+                <li class="list-group-item border-0 d-flex justify-content-between">
+                    <span><h2 class="text-muted">{{this.name}}</h2></span><span><h2>{{this.change}}</h2></span>
+                </li>
+                <li class="list-group-item border-0 d-flex justify-content-between">
+                    <span>{{this.exchange}}</span><span>{{this.date}}</span>
+                </li>
+                <li class="list-group-item border-0 d-flex justify-content-between">
+                    <span><button class="btn btn-success">BUY</button></span><span></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <p>Market Open</p>
+        </div>
+    </div>
+<mat-tab-group>
+    <mat-tab label="Summary"> <app-detail-summary></app-detail-summary> </mat-tab>
+    <mat-tab label="News"> <app-detail-news></app-detail-news> </mat-tab>
+    <mat-tab label="Charts"> <app-detail-chart></app-detail-chart> </mat-tab>
+  </mat-tab-group>
+</div>
