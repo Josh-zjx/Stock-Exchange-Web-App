@@ -1,1 +1,61 @@
-<p>detail-summary works!</p>
+<div class="container">
+    <div class="row">
+    <div class="col-6">
+        <div class="row">
+            <div class="col">
+                <table class="" style="text-align: left;">
+                    <tr class="">
+                        <td>High Price:</td><td>{{this.detailclose.high}}</td>
+                    </tr>
+                    <tr class="">
+                        <td>Low Price:</td><td>{{this.detailclose.low}}</td>
+                    </tr>
+                    <tr class="">
+                        <td>Open Price:</td><td>{{this.detailclose.open}}</td>
+                    </tr>
+                    <tr class="">
+                        <td>Prev.Close:</td><td>{{this.detailclose.prevclose}}</td>
+                    </tr>
+                    <tr class="">
+                        <td>Volume:</td><td>{{this.detailclose.volume}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div *ngIf="marketopen" class="col">
+                <table class="" style="text-align: left;">
+                    <tr class="">
+                        <td>Mid Price:</td><td>{{this.detailopen.mid}}</td>
+                    </tr>
+                    <tr class="">
+                        <td>Ask Price:</td><td>{{this.detailopen.askprice}}</td>
+                    </tr>
+                    <tr class="">
+                        <td>Ask Size:</td><td>{{this.detailopen.asksize}}</td>
+                    </tr>
+                    <tr class="">
+                        <td>Bid Price:</td><td>{{this.detailopen.bidprice}}</td>
+                    </tr>
+                    <tr class="">
+                        <td>Bid Size:</td><td>{{this.detailopen.bidsize}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h1>Company's Description</h1>
+                <p>Start Date:{{this.detaildesc.startdate}}</p>
+                <p>{{this.detaildesc.description}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <P>charts here</P>
+        <highcharts-chart
+   [Highcharts] = "highcharts" 
+   [options] = "chartOptions" 
+   style = "width: 100%; height: 400px; display: block;">
+</highcharts-chart>
+    </div>
+    </div>
+</div>

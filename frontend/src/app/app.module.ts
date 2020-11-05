@@ -24,7 +24,9 @@ import { SellmodalComponent } from './components/sellmodal/sellmodal.component';
 import { DetailSummaryComponent } from './components/detail-summary/detail-summary.component';
 import { DetailNewsComponent } from './components/detail-news/detail-news.component';
 import { DetailChartComponent } from './components/detail-chart/detail-chart.component';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
+import { NewsmodalComponent } from './components/newsmodal/newsmodal.component';
+import { HighchartsChartModule } from 'highcharts-angular'
 
 @NgModule({
   declarations: [
@@ -41,7 +43,9 @@ import {MatTabsModule} from '@angular/material/tabs';
     SellmodalComponent,
     DetailSummaryComponent,
     DetailNewsComponent,
-    DetailChartComponent
+    DetailChartComponent,
+    NewsmodalComponent,
+    //HighchartsChartComponent
   ],
   imports: [
     FormsModule,
@@ -50,7 +54,8 @@ import {MatTabsModule} from '@angular/material/tabs';
     NgbModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatTabsModule
+    MatTabsModule,
+    HighchartsChartModule
   ],
   providers: [
     WatchlistdataService,

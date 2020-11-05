@@ -45,22 +45,31 @@ app.get('/query',(req,res)=>{
     }
     else if(type=="dac"){
         var date = new Date();
-        date.setDate(date.getDate() - 2);
+        date.setDate(date.getDate());
         var start_date = "";
         start_date +=(date.getFullYear()).toString();
         start_date +="-";
         start_date +=(date.getMonth()+1).toString();
         start_date +="-";
         start_date +=date.getDate().toString();
-        options.path = `/iex/${ticker}/prices?startDate=${start_date}&resampleFreq=5min&token=${stock_token}`;
+        options.path = `/iex/${ticker}/prices?startDate=${start_date}&resampleFreq=4min&token=${stock_token}`;
         https.get(options,(response)=>{
             var body = '';
             response.on('data', function(data) {
                 body += data;
             });
             response.on('end',()=>{
+                rawdata=JSON.parse(body);
+                newdata=[]
+                console.log(typeof(rawdata[0]["date"]))
+                //res.send(body)
+                for(var i=0;i!=rawdata.length;i++)
+                {
+                    //console.log(JSON.parse(rawdata[i]))
+                    newdata.push([Date.parse(rawdata[i]["date"]),rawdata[i]["close"]])
+                }
                 console.log(body);
-                res.send(body);
+                res.send(JSON.stringify(newdata));
             });
         });
     }
@@ -80,8 +89,18 @@ app.get('/query',(req,res)=>{
                 body += data;
             });
             response.on('end',()=>{
+                rawdata=JSON.parse(body);
+                newdata=[]
+                console.log(typeof(rawdata[0]["date"]))
+                //res.send(body)
+                for(var i=0;i!=rawdata.length;i++)
+                {
+                    //console.log(JSON.parse(rawdata[i]))
+                    newdata.push([Date.parse(rawdata[i]["date"]),rawdata[i]["open"],rawdata[i]["high"],rawdata[i]["low"],rawdata[i]["close"],rawdata[i]["volume"]])
+                }
                 console.log(body);
-                res.send(body);
+                res.send(JSON.stringify(newdata));
+                //res.send(body);
             });
         });
     }
@@ -95,7 +114,14 @@ app.get('/query',(req,res)=>{
             });
             response.on('end',()=>{
                 console.log(body);
-                res.send(body);
+                rawnews = JSON.parse(body)["articles"];
+                newnews = []
+                for(var i=0;i!=rawnews.length;i++)
+                {
+                    newnews.push({"url":rawnews[i]["url"],"title":rawnews[i]["title"],"description":rawnews[i]["description"],"source":rawnews[i]["source"]["name"],"urlToImage":rawnews[i]["urlToImage"],"publishedAt":rawnews[i]["publishedAt"]})
+                }
+                res.send(JSON.stringify(newnews));
+                console.log(rawnews.length)
             }); 
         });
     }
