@@ -24,6 +24,7 @@
     </div>
 <mat-tab-group mat-stretch-tabs mat-align-tabs="center" animationDuration="0ms">
     <mat-tab label="Summary">
+        
         <div class="container">
             <div class="row">
             <div class="col">
@@ -75,6 +76,7 @@
                     </div>
                 </div>
             </div>
+            
             <div class="col-md-6">
                 <highcharts-chart
            [Highcharts] = "highcharts" 
@@ -85,13 +87,14 @@
            style = "height:500px;display: block;">
         </highcharts-chart>
             </div>
+        
             </div>
         </div>
-        
-        
+    
         
         <!--<app-detail-summary [dailydata]="dailydata" [updatechart]="updatechart" [detailclose]="detailclose" [detailopen]="detailopen" [detaildesc]="detaildesc"></app-detail-summary>--> </mat-tab>
     <mat-tab label="News"> <app-detail-news [ticker]="this.ticker"></app-detail-news> </mat-tab>
-    <mat-tab label="Charts"> <app-detail-chart></app-detail-chart> </mat-tab>
+    <mat-tab label="Charts"> <ng-template matTabContent>
+        <app-detail-chart [ticker]="this.ticker"></app-detail-chart></ng-template></mat-tab>
   </mat-tab-group>
 </div>

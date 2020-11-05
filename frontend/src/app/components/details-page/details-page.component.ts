@@ -11,7 +11,7 @@ import * as Highcharts from 'highcharts/highstock'
   styleUrls: ['./details-page.component.css']
 })
 export class DetailsPageComponent implements OnInit {
-  ticker:string="AAPL";
+  ticker:string="NVDA";
   updatechart:boolean=false;
   stockChart:string="stockChart";
   date:string="2020-02-02";
