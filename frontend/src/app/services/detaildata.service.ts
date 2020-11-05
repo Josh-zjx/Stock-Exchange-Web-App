@@ -11,27 +11,24 @@ export class DetaildataService {
   constructor(private localOP:LocaldataService,private remoteOP:RemotedataService) { 
 
   }
-  rendernews(){
-
+  rendernews(ticker:string):Observable<object>{
+    return this.remoteOP.getremote(ticker,"news")
   }
-  rendercharts(){
+  rendercharts(ticker:string):Observable<object>{
+    return this.remoteOP.getremote(ticker,"hist")
     
   }
-  rendersummary(){
+  rendersummary(ticker:string):Observable<object[]>{
+    var ob = [this.remoteOP.getremote(ticker,"daily"),this.remoteOP.getremote(ticker,"iex")]
+    return forkJoin(ob)
+
 
   }
-  renderdailycharts(ticker:string,offset:number=0){
-    this.remoteOP.getremote(ticker,`dac&offset=${offset}`).subscribe(
-      (res)=>{
-        if(res == [])
-        {
-          console.log(res);
-          return this.renderdailycharts(ticker,offset-1);
-        }
-        else
-        {
-          return res;
-        }
-    })
+  renderdailycharts(ticker:string,offset:number=0):Observable<object>{
+    
+    return this.remoteOP.getremote(ticker,`dac&offset=${offset}`)
+
   }
+  
+
 }

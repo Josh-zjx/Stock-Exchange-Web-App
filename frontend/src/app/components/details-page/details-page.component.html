@@ -22,8 +22,75 @@
             <p>Market Open</p>
         </div>
     </div>
-<mat-tab-group mat-stretch-tabs mat-align-tabs="center">
-    <mat-tab label="Summary"><app-detail-summary [dailydata]="dailydata" [detailclose]="detailclose" [detailopen]="detailopen" [detaildesc]="detaildesc"></app-detail-summary> </mat-tab>
+<mat-tab-group mat-stretch-tabs mat-align-tabs="center" animationDuration="0ms">
+    <mat-tab label="Summary">
+        <div class="container">
+            <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <table class="" style="text-align: left;">
+                            <tr class="">
+                                <td>High Price:</td><td>{{this.detailclose.high}}</td>
+                            </tr>
+                            <tr class="">
+                                <td>Low Price:</td><td>{{this.detailclose.low}}</td>
+                            </tr>
+                            <tr class="">
+                                <td>Open Price:</td><td>{{this.detailclose.open}}</td>
+                            </tr>
+                            <tr class="">
+                                <td>Prev.Close:</td><td>{{this.detailclose.prevclose}}</td>
+                            </tr>
+                            <tr class="">
+                                <td>Volume:</td><td>{{this.detailclose.volume}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div *ngIf="marketopen" class="col">
+                        <table class="" style="text-align: left;">
+                            <tr class="">
+                                <td>Mid Price:</td><td>{{this.detailopen.mid}}</td>
+                            </tr>
+                            <tr class="">
+                                <td>Ask Price:</td><td>{{this.detailopen.askprice}}</td>
+                            </tr>
+                            <tr class="">
+                                <td>Ask Size:</td><td>{{this.detailopen.asksize}}</td>
+                            </tr>
+                            <tr class="">
+                                <td>Bid Price:</td><td>{{this.detailopen.bidprice}}</td>
+                            </tr>
+                            <tr class="">
+                                <td>Bid Size:</td><td>{{this.detailopen.bidsize}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h1>Company's Description</h1>
+                        <p>Start Date:{{this.detaildesc.startdate}}</p>
+                        <p>{{this.detaildesc.description}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <highcharts-chart
+           [Highcharts] = "highcharts" 
+           [constructorType]="stockChart"
+           [(update)]="updatechart"
+           [options] = "chartOptions" 
+           [callbackFunction]="chartCallback"
+           style = "height:500px;display: block;">
+        </highcharts-chart>
+            </div>
+            </div>
+        </div>
+        
+        
+        
+        <!--<app-detail-summary [dailydata]="dailydata" [updatechart]="updatechart" [detailclose]="detailclose" [detailopen]="detailopen" [detaildesc]="detaildesc"></app-detail-summary>--> </mat-tab>
     <mat-tab label="News"> <app-detail-news></app-detail-news> </mat-tab>
     <mat-tab label="Charts"> <app-detail-chart></app-detail-chart> </mat-tab>
   </mat-tab-group>

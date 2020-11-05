@@ -44,16 +44,18 @@ app.get('/query',(req,res)=>{
         });
     }
     else if(type=="dac"){
-        var offset = req.query.offset;
+        var offset = Number(req.query.offset);
         console.log(offset)
         var date = new Date();
-        date.setDate(date.getDate()-offset);
+        console.log(date)
+        date.setDate(date.getDate()+offset);
         var start_date = "";
         start_date +=(date.getFullYear()).toString();
         start_date +="-";
         start_date +=(date.getMonth()+1).toString();
         start_date +="-";
         start_date +=date.getDate().toString();
+        console.log(start_date)
         options.path = `/iex/${ticker}/prices?startDate=${start_date}&resampleFreq=4min&token=${stock_token}`;
         https.get(options,(response)=>{
             var body = '';
@@ -61,18 +63,26 @@ app.get('/query',(req,res)=>{
                 body += data;
             });
             response.on('end',()=>{
-                console.log(body)
+                //console.log(body)
                 rawdata=JSON.parse(body);
                 newdata=[]
-                //console.log(typeof(rawdata[0]["date"]))
-                //res.send(body)
+                if(rawdata.length==0)
+                {
+                    res.send(JSON.stringify([]))
+                }
+                else
+                {
+                    
                 for(var i=0;i!=rawdata.length;i++)
                 {
                     //console.log(JSON.parse(rawdata[i]))
-                    newdata.push([Date.parse(rawdata[i]["date"]),rawdata[i]["close"]])
+                    newdata.push([Date.parse(rawdata[i]["date"])-3600000*8,rawdata[i]["close"]])
                 }
-                //console.log(body);
+                console.log(body);
                 res.send(JSON.stringify(newdata));
+                }
+                //console.log(typeof(rawdata[0]["date"]))
+                
             });
         });
     }
