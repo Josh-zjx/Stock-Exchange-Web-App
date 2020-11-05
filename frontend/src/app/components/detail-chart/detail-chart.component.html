@@ -1,1 +1,8 @@
-<p>detail-chart works!</p>
+<highcharts-chart
+           [Highcharts] = "highcharts" 
+           [constructorType]="stockChart"
+           [(update)]="updatechart"
+           [options] = "chartOptions" 
+           [callbackFunction]="chartCallback"
+           style = "height:500px;display: block;">
+        </highcharts-chart>
