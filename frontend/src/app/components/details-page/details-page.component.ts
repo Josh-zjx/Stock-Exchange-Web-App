@@ -17,6 +17,7 @@ export class DetailsPageComponent implements OnInit {
   exchange:string="NASDAQ";
   date:string="2020-02-02";
   isopen:boolean;
+  dailydata: number[][];
   detaildesc:detaildesc={ticker:"NVDA",name:"NVIDIA",exchangecode:"NASDAQ",description:"Good Company",startdate:"lastweek"};
   detailclose:detailclose={last:15,
     change:2,
@@ -38,7 +39,7 @@ export class DetailsPageComponent implements OnInit {
   constructor(private detaildata:DetaildataService,private portfoliodata:PortfoliodataService,private watchlistdata:WatchlistdataService) { }
 
   ngOnInit(): void {
-    this.detaildata.renderdailycharts("AAPL")
+    this.dailydata=this.detaildata.renderdailycharts("AAPL")
   }
   iswatchlist(){}
   addwatchlist(){}

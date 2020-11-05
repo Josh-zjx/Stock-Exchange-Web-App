@@ -44,8 +44,10 @@ app.get('/query',(req,res)=>{
         });
     }
     else if(type=="dac"){
+        var offset = req.query.offset;
+        console.log(offset)
         var date = new Date();
-        date.setDate(date.getDate());
+        date.setDate(date.getDate()-offset);
         var start_date = "";
         start_date +=(date.getFullYear()).toString();
         start_date +="-";
@@ -59,16 +61,17 @@ app.get('/query',(req,res)=>{
                 body += data;
             });
             response.on('end',()=>{
+                console.log(body)
                 rawdata=JSON.parse(body);
                 newdata=[]
-                console.log(typeof(rawdata[0]["date"]))
+                //console.log(typeof(rawdata[0]["date"]))
                 //res.send(body)
                 for(var i=0;i!=rawdata.length;i++)
                 {
                     //console.log(JSON.parse(rawdata[i]))
                     newdata.push([Date.parse(rawdata[i]["date"]),rawdata[i]["close"]])
                 }
-                console.log(body);
+                //console.log(body);
                 res.send(JSON.stringify(newdata));
             });
         });

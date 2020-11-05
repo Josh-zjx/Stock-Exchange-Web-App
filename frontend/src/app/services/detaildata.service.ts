@@ -20,13 +20,18 @@ export class DetaildataService {
   rendersummary(){
 
   }
-  renderdailycharts(ticker:string):void{
-    this.remoteOP.getremote(ticker,"dac").subscribe(
+  renderdailycharts(ticker:string,offset:number=0){
+    this.remoteOP.getremote(ticker,`dac&offset=${offset}`).subscribe(
       (res)=>{
-        console.log(res)
-
-
+        if(res == [])
+        {
+          console.log(res);
+          return this.renderdailycharts(ticker,offset-1);
+        }
+        else
+        {
+          return res;
+        }
     })
-
   }
 }

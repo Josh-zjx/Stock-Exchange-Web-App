@@ -10,6 +10,7 @@ export class DetailSummaryComponent implements OnInit {
   @Input() detailclose:detailclose;
   @Input() detailopen:detailopen;
   @Input() detaildesc:detaildesc;
+  @Input() dailydata:number[][];
   @Input() marketopen:boolean=false;
   constructor() { }
 
