@@ -91,7 +91,7 @@
         
         
         <!--<app-detail-summary [dailydata]="dailydata" [updatechart]="updatechart" [detailclose]="detailclose" [detailopen]="detailopen" [detaildesc]="detaildesc"></app-detail-summary>--> </mat-tab>
-    <mat-tab label="News"> <app-detail-news></app-detail-news> </mat-tab>
+    <mat-tab label="News"> <app-detail-news [ticker]="this.ticker"></app-detail-news> </mat-tab>
     <mat-tab label="Charts"> <app-detail-chart></app-detail-chart> </mat-tab>
   </mat-tab-group>
 </div>

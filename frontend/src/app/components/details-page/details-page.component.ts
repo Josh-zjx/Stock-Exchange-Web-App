@@ -31,11 +31,21 @@ export class DetailsPageComponent implements OnInit {
     //console.log(this.dailydata)
     
   }
-  iswatchlist(){}
-  addwatchlist(){}
-  deletewatchlist(){}
-  buy(){}
-  openbuy(){}
+  iswatchlist(){
+    this.watchlistdata.inwatchlist(this.ticker)
+  }
+  addwatchlist(){
+    this.watchlistdata.addwatchlist(this.ticker)
+  }
+  deletewatchlist(){
+    this.watchlistdata.deletewatchlist(this.ticker)
+  }
+  buy(){
+
+  }
+  openbuy(){
+    
+  }
   getdetail(){
     this.detaildata.rendersummary(this.ticker).subscribe(res=>{
       console.log("daily info")

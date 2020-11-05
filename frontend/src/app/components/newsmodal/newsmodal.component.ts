@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Input } from '@angular/core';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { detailnewsitem } from '../../models/remotedata';
 
 @Component({
   selector: 'app-newsmodal',
@@ -6,9 +8,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./newsmodal.component.css']
 })
 export class NewsmodalComponent implements OnInit {
-
+  @Input() news:detailnewsitem;
   constructor() { }
-
+    
   ngOnInit(): void {
   }
 

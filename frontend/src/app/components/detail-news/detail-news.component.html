@@ -1,1 +1,18 @@
-<p>detail-news works!</p>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <ul class="list-group">
+                <app-news-item *ngFor="let item of newslist1" (click)="opennews(item)" [news]="item"></app-news-item>
+            </ul>
+        </div>
+        <div class="col">
+            <ul class="list-group">
+                <app-news-item *ngFor="let item of newslist2" (click)="opennews(item)" [news]="item"></app-news-item>
+            </ul>
+        </div>
+    
+    </div>
+
+
+
+</div>

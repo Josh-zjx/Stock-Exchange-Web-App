@@ -26,7 +26,9 @@ import { DetailNewsComponent } from './components/detail-news/detail-news.compon
 import { DetailChartComponent } from './components/detail-chart/detail-chart.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { NewsmodalComponent } from './components/newsmodal/newsmodal.component';
-import { HighchartsChartModule } from 'highcharts-angular'
+import { HighchartsChartModule } from 'highcharts-angular';
+import { NewsItemComponent } from './components/news-item/news-item.component'
+import {MatCardModule} from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -45,6 +47,7 @@ import { HighchartsChartModule } from 'highcharts-angular'
     DetailNewsComponent,
     DetailChartComponent,
     NewsmodalComponent,
+    NewsItemComponent,
     //HighchartsChartComponent
   ],
   imports: [
@@ -55,7 +58,8 @@ import { HighchartsChartModule } from 'highcharts-angular'
     HttpClientModule,
     BrowserAnimationsModule,
     MatTabsModule,
-    HighchartsChartModule
+    HighchartsChartModule,
+    MatCardModule
   ],
   providers: [
     WatchlistdataService,
