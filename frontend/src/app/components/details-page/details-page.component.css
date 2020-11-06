@@ -3,3 +3,12 @@
     border:0px;
     background-color: inherit;
 }
+.wrapper {
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+  }
+  .inner {
+    color: white;
+    padding: 12px;
+  }

@@ -32,8 +32,9 @@ export class PortfolioPageComponent implements OnInit {
     }
   ]
   constructor(private dataservice:PortfoliodataService) { }
-
+  isloading:boolean=true;
   ngOnInit(): void {
+    this.isloading=true;
     this.getportfolio();
   }
   buy(neworder:order){
@@ -45,7 +46,64 @@ export class PortfolioPageComponent implements OnInit {
     this.getportfolio();
   }
   getportfolio(){
-    this.Portfolio=this.dataservice.renderportfolio();
+    this.isloading=true;
+    if(Object.keys(this.dataservice.portfoliodata).length==0)
+      {
+        this.Portfolio=[]
+        this.isloading=false;
+        return
+      }
+    this.dataservice.renderportfolio().subscribe(res=>{
+      var parsedstring;
+      var portfolioitems:portfolioitem[]=[];
+      var tmp={};
+      this.Portfolio=[]
+      
+      console.log(this.Portfolio.length)
+      for(var i=0;i!=Object.keys(this.dataservice.portfoliodata).length;i++)
+    {
+      tmp[Object.keys(this.dataservice.portfoliodata)[i]]={
+        ticker:Object.keys(this.dataservice.portfoliodata)[i],
+        name:"",
+        Quantity:this.dataservice.portfoliodata[Object.keys(this.dataservice.portfoliodata)[i]].share,
+        averagecost:this.dataservice.portfoliodata[Object.keys(this.dataservice.portfoliodata)[i]].cost/this.dataservice.portfoliodata[Object.keys(this.dataservice.portfoliodata)[i]].share,
+        totalcost:this.dataservice.portfoliodata[Object.keys(this.dataservice.portfoliodata)[i]].cost,
+        change:0,
+        currentprice:0,
+        marketvalue:0,
+      }
+      //list.push(this.remoteOP.getremote(Object.keys(this.portfoliodata)[i],"iex"));
+      //list.push(this.remoteOP.getremote(Object.keys(this.portfoliodata)[i],"daily"));
+      
+    }
+      for(var i=0;i!=res.length;i++)
+      {
+        parsedstring = res[i];
+        //console.log(parsedstring)
+        if(parsedstring.hasOwnProperty("name"))
+        {
+          tmp[parsedstring["ticker"]].name=parsedstring["name"];
+        }
+        else
+        {
+
+          tmp[parsedstring[0]["ticker"]].currentprice=parsedstring[0]["last"];
+          tmp[parsedstring[0]["ticker"]].change=parsedstring[0]["last"]-tmp[parsedstring[0]["ticker"]].averagecost;
+          tmp[parsedstring[0]["ticker"]].marketvalue=tmp[parsedstring[0]["ticker"]].currentprice*tmp[parsedstring[0]["ticker"]].Quantity;
+          //console.log(tmp[parsedstring[0]["ticker"]].share)
+        }
+        
+        
+      }
+      for(var i=0;i!=Object.keys(this.dataservice.portfoliodata).length;i++)
+      {
+        //console.log(Object.keys(this.portfoliodata))
+        portfolioitems.push(tmp[Object.keys(this.dataservice.portfoliodata)[i]]);
+      }
+      //console.log(portfolioitems)
+      this.Portfolio=portfolioitems;
+      this.isloading=false;
+    })
     //console.log(this.Portfolio)
   }
 

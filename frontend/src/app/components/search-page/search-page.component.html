@@ -12,9 +12,12 @@
                 
                   <input >
                   <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                    <mat-option *ngIf="isloading" class="is-loading"><mat-spinner diameter="50"></mat-spinner></mat-option>
+                    <div *ngIf="!isloading">
                     <mat-option *ngFor="let option of options " [value]="option.ticker">
                       {{option.ticker}} | {{option.name}}
                     </mat-option>
+                  </div>
                   </mat-autocomplete>
               </form>
             <div class="wrap">

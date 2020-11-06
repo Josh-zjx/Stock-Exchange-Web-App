@@ -2,7 +2,7 @@
   
     <div class="card card-hover-shadow mt-4">
       
-      <div class="card-header"  >
+      <div class="card-header" (click)="navidetail(item)" >
         <h1 class="mt-auto mb-auto">
           {{item.ticker}}
           <small class="text-muted">{{item.name}}</small>
@@ -13,14 +13,14 @@
         <div class="col ml-auto">
           <ul class="list-group">
             <li class="list-group-item border-0 d-flex justify-content-between ">
-              <span>Quantity:</span><span>{{item.Quantity}}</span>
+              <span>Quantity:</span><span>{{item.Quantity| number : '1.0-3'}}</span>
               
             </li>
             <li class="list-group-item border-0 d-flex justify-content-between lh-condensed">
-              <span>Avg. Cost/Share:</span><span>{{item.averagecost}}</span>
+              <span>Avg. Cost/Share:</span><span>{{item.averagecost| number : '1.0-3'}}</span>
             </li>
             <li class="list-group-item border-0 d-flex justify-content-between lh-condensed">
-              <span>Total Cost:</span><span>{{item.totalcost}}</span>
+              <span>Total Cost:</span><span>{{item.totalcost| number : '1.0-3'}}</span>
             </li>
           </ul>
          
@@ -30,13 +30,13 @@
         <div class="col mr-auto">
           <ul class="list-group">
             <li class="list-group-item border-0 d-flex justify-content-between ">
-              <span>Change:</span><span>{{item.change}}</span>
+              <span>Change:</span><span>{{item.change| number : '1.0-3'}}</span>
             </li>
             <li class="list-group-item border-0 d-flex justify-content-between lh-condensed">
-              <span>Current Price:</span><span>{{item.currentprice}}</span>
+              <span>Current Price:</span><span>{{item.currentprice| number : '1.0-3'}}</span>
             </li>
             <li class="list-group-item border-0 d-flex justify-content-between lh-condensed">
-              <span>Market Value:</span><span>{{item.marketvalue}}</span>
+              <span>Market Value:</span><span>{{item.marketvalue| number : '1.0-3'}}</span>
             </li>
           </ul>
         </div>

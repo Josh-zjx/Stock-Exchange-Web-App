@@ -4,7 +4,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BuymodalComponent } from '../buymodal/buymodal.component';
 import { SellmodalComponent } from '../sellmodal/sellmodal.component';
 import { order } from '../../models/portfoliodata'
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-portfolio-page-item',
   templateUrl: './portfolio-page-item.component.html',
@@ -14,7 +14,7 @@ export class PortfolioPageItemComponent implements OnInit {
   @Input() item:portfolioitem;
   @Output() buyemitter= new EventEmitter();
   @Output() sellemitter = new EventEmitter();
-  constructor(private modalService:NgbModal) { }
+  constructor(private modalService:NgbModal,private router:Router) { }
 
   ngOnInit(): void {
   }
@@ -40,5 +40,8 @@ export class PortfolioPageItemComponent implements OnInit {
   }
   sell(neworder:order){
     this.sellemitter.emit(neworder);
+  }
+  navidetail(item:portfolioitem):void{
+    this.router.navigateByUrl("/details/"+item.ticker)
   }
 }

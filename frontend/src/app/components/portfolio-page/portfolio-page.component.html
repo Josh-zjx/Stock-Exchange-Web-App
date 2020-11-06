@@ -4,7 +4,10 @@
         
         <h1>My Portfolio</h1>
     </div>
-    <div *ngIf="this.Portfolio.length==0"class="alert alert-warning" role="alert">
+    <div class="wrapper" *ngIf="isloading">
+        <div class="inner"><mat-spinner></mat-spinner></div>
+      </div>
+    <div *ngIf="!isloading&&this.Portfolio.length==0"class="alert alert-warning" role="alert">
         Currently you don't have any stock.
       </div>
     <!--<div *ngFor="let item of watchlistitems">
@@ -15,5 +18,7 @@
         <p>cp:{{item.changepercent}} </p>
     </div>
     -->
+    <div *ngIf="!isloading">
     <app-portfolio-page-item *ngFor="let item of Portfolio" [item]="item" (buyemitter)="buy($event)" (sellemitter)="sell($event)"  ></app-portfolio-page-item>
+</div>
 </div>
