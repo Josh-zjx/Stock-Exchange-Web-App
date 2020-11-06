@@ -6,10 +6,22 @@
     </div>
     <div class="row">
         <div class="col" style="text-align: center;">
-            
+            <form class="example-form">
+                
+                  <input >
+                  <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                    <mat-option *ngFor="let option of options " [value]="option.ticker">
+                      {{option.ticker}} | {{option.name}}
+                    </mat-option>
+                  </mat-autocomplete>
+              </form>
             <div class="wrap">
                 <div class="search">
-                   <input type="text" [(ngModel)]="ticker" class="searchTerm" placeholder="What are you looking for?">
+                   <input type="text" 
+                   aria-label="Number"
+                   matInput
+                   [formControl]="myControl"
+                   [matAutocomplete]="auto" [(ngModel)]="ticker" class="searchTerm" placeholder="What are you looking for?">
                    <button type="submit" class="searchButton" (click)="navi()">
                      <i class="fa fa-search"></i>
                   </button>

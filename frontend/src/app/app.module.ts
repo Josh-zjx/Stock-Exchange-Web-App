@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -29,6 +29,7 @@ import { NewsmodalComponent } from './components/newsmodal/newsmodal.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { NewsItemComponent } from './components/news-item/news-item.component'
 import {MatCardModule} from '@angular/material/card';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,9 @@ import {MatCardModule} from '@angular/material/card';
     BrowserAnimationsModule,
     MatTabsModule,
     HighchartsChartModule,
-    MatCardModule
+    MatCardModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule
   ],
   providers: [
     WatchlistdataService,

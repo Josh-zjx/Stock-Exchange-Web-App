@@ -17,18 +17,18 @@ app.get('/query',(req,res)=>{
     console.log(`Received query on ${ticker}`);
     var options = {host:"api.tiingo.com"}
     if(type=="daily"){
-        options.path = `/tiingo/daily/${ticker}?token=${stock_token}`;
-        
-        https.get(options,(response)=>{
-            var body = '';
-            response.on('data', function(data) {
-                body += data;
+            options.path = `/tiingo/daily/${ticker}?token=${stock_token}`;
+            
+            https.get(options,(response)=>{
+                var body = '';
+                response.on('data', function(data) {
+                    body += data;
+                });
+                response.on('end',()=>{
+                    console.log(body);
+                    res.send(body);
+                });
             });
-            response.on('end',()=>{
-                console.log(body);
-                res.send(body);
-            });
-        });
     }
     else if(type=="iex"){
         options.path = `/iex/${ticker}?token=${stock_token}`;
@@ -174,7 +174,18 @@ app.get('/query',(req,res)=>{
     }
     else if(type=="ac")
     {
-
+        options.path = `/tiingo/utilities/search?query=${ticker}&token=${stock_token}`;
+            
+        https.get(options,(response)=>{
+            var body = '';
+            response.on('data', function(data) {
+                body += data;
+            });
+            response.on('end',()=>{
+                console.log(body);
+                res.send(body);
+            });
+        });
     }
     else{
         res.send("Unrecognized Token");
