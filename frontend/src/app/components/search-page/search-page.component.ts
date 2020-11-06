@@ -27,7 +27,11 @@ export class SearchPageComponent implements OnInit {
     )
   }
   navi(){
-    this.router.navigateByUrl(`/details/${this.ticker}`);
+    if(this.ticker!="")
+    {
+      this.router.navigateByUrl(`/details/${this.ticker}`);
+    }
+    
   }
   getnewac(ticker:string)
   {

@@ -30,6 +30,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { NewsItemComponent } from './components/news-item/news-item.component'
 import {MatCardModule} from '@angular/material/card';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     HighchartsChartModule,
     MatCardModule,
     MatAutocompleteModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     WatchlistdataService,

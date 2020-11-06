@@ -30,12 +30,12 @@ export class WatchlistdataService {
     {
       if(original[i].ticker==ticker)
       {
-        //console.log(`deleting${ticker}`)
+        console.log(`deleting${ticker}`)
         original.splice(i,1);
         break;
       }
     }    
-    //console.log(original)
+    console.log(original)
     this.localOP.setlocal("watchlist",JSON.stringify(original));
   };
   inwatchlist(ticker:string):boolean{
@@ -61,21 +61,20 @@ export class WatchlistdataService {
     return JSON.parse(rawstring);
     //return [{ticker:"AAPL"},{ticker:"MSFN"},{ticker:"IBM"}]
   };
-  renderwatchlist():watchlistitem[]{
+  renderwatchlist():Observable<object[]>{
     var list:Observable<object>[] = []; 
     var namelist = this.getwatchlist();
     //console.log(namelist);
-    var watchlist={};
-    var watchlistitems:watchlistitem[]=[];
+    
     for(var i=0;i!=namelist.length;i++)
     {
-      watchlist[namelist[i].ticker]={ticker:namelist[i].ticker,name:"",change:0,currentprice:0,changepercent:0};
+      //watchlist[namelist[i].ticker]={ticker:namelist[i].ticker,name:"",change:0,currentprice:0,changepercent:0};
       list.push(this.remoteOP.getremote(namelist[i].ticker,"daily"));
       list.push(this.remoteOP.getremote(namelist[i].ticker,"iex"));
     }
     //console.log(watchlist)
     var allob:Observable<object[]>=forkJoin(list);
-    allob.subscribe(res=>{
+    /*allob.subscribe(res=>{
       var parsedstring;
       for(var i=0;i!=res.length;i++)
       {
@@ -97,8 +96,8 @@ export class WatchlistdataService {
         watchlistitems.push(watchlist[namelist[i].ticker]);
       }
       return watchlistitems;
-    })
-    return watchlistitems;
+    })*/
+    return allob;
   };
   
 }

@@ -1,8 +1,10 @@
 <div class="container">
     <div class="row">
         <div class="col"style="text-align: center;">
-            <H1>STOCK SEARCH</H1>
+            <h1 class="display-1" style="font-size:6rem;font-weight:300;line-height:1.2"> STOCK SEARCH</h1>
         </div>
+        
+        
     </div>
     <div class="row">
         <div class="col" style="text-align: center;">
@@ -21,7 +23,7 @@
                    aria-label="Number"
                    matInput
                    [formControl]="myControl"
-                   [matAutocomplete]="auto" [(ngModel)]="ticker" class="searchTerm" placeholder="What are you looking for?">
+                   [matAutocomplete]="auto" [(ngModel)]="ticker" class="searchTerm" placeholder="Enter stock name">
                    <button type="submit" class="searchButton" (click)="navi()">
                      <i class="fa fa-search"></i>
                   </button>

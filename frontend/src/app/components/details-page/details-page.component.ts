@@ -18,6 +18,9 @@ export class DetailsPageComponent implements OnInit {
   ticker:string="NVDA";
   updatechart:boolean=false;
   isvalid:boolean=true;
+  showbuy:boolean=false;
+  showadd:boolean=false;
+  showdel:boolean=false;
   stockChart:string="stockChart";
   date:string="2020-02-02";
   inwatchlist:boolean=false;
@@ -45,13 +48,27 @@ export class DetailsPageComponent implements OnInit {
   addwatchlist(){
     this.watchlistdata.addwatchlist(this.ticker)
     this.inwatchlist=true;
+    this.showdel=false;
+    this.showadd=true;
+    setTimeout(()=>{
+      this.showadd=false;
+    },3000)
   }
   deletewatchlist(){
     this.watchlistdata.deletewatchlist(this.ticker)
     this.inwatchlist=false;
+    this.showdel=true;
+    this.showadd=false;
+    setTimeout(()=>{
+      this.showdel=false;
+    },3000)
   }
   buy(neworder:order){
     this.portfoliodata.buy(neworder.name,neworder.amount,neworder.price);
+    this.showbuy=true;
+    setTimeout(()=>{
+      this.showbuy=false;
+    },3000)
     //this.getportfolio();
   }
   openbuy() {

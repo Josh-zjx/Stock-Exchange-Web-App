@@ -4,6 +4,9 @@
         
         <h1>My Portfolio</h1>
     </div>
+    <div *ngIf="this.Portfolio.length==0"class="alert alert-warning" role="alert">
+        Currently you don't have any stock.
+      </div>
     <!--<div *ngFor="let item of watchlistitems">
         <p>Name:{{item.name}} </p>
         <p>Ticker:{{item.ticker}} </p>

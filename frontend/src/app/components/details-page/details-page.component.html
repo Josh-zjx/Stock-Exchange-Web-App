@@ -4,6 +4,22 @@
       </div>
 </div>
 <div *ngIf="isvalid" class="container">
+    <div *ngIf="showadd" class="alert alert-success alert-dismissible fade show" role="alert">
+        {{this.ticker}} added to Watchlist.<button type="button" class="close" (click)="this.showadd=false" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div *ngIf="showdel" class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{this.ticker}} removed from Watchlist.<button type="button" class="close" (click)="this.showdel=false" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+    <div *ngIf="showbuy" class="alert alert-success alert-dismissible fade show" role="alert">
+        {{this.ticker}} bought successfully!<button type="button" class="close" (click)="this.showbuy=false" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      
     <div class="row">
         <div class="col ml-auto mr-auto">
             <ul class="list-group">

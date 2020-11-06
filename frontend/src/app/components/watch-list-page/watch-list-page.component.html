@@ -2,6 +2,10 @@
     <div class="row">
         <h1>My Watchlist</h1>
     </div>
+    <div *ngIf="isloading"class="col"><mat-spinner></mat-spinner></div>
+    <div *ngIf="!isloading&&this.watchlistitems.length==0"class="alert alert-warning" role="alert">
+        Currently you don't have any stock in your watchlist.
+      </div>
     <!--<div *ngFor="let item of watchlistitems">
         <p>Name:{{item.name}} </p>
         <p>Ticker:{{item.ticker}} </p>
@@ -10,5 +14,7 @@
         <p>cp:{{item.changepercent}} </p>
     </div>
     -->
-    <app-watch-list-item *ngFor="let item of watchlistitems" [item]="item" (deleteitem)="deleteitem($event)"></app-watch-list-item>
+    <div *ngIf="!isloading">
+    <app-watch-list-item  *ngFor="let item of watchlistitems" [item]="item" (deleteitem)="deleteitem($event)"></app-watch-list-item>
+    </div>
 </div>
