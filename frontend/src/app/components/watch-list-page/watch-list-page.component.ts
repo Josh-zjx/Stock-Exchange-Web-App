@@ -26,15 +26,16 @@ export class WatchListPageComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    //this.getWatchList();
+    this.getWatchList();
   }
   getWatchList():void{
     this.watchlistitems=this.dataservice.renderwatchlist();
   }
   deleteitem(name:string):void{
     //window.alert("Should delete")
+    //console.log(`lease delete ${name}`)
     this.dataservice.deletewatchlist(name);
-    //this.getWatchList();
+    this.getWatchList();
   }
 
 }

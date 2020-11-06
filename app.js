@@ -38,8 +38,16 @@ app.get('/query',(req,res)=>{
                 body += data;
             });
             response.on('end',()=>{
-                console.log(body);
+                if(body=='{"detail":"Not found."}')
+                {
+                    res.send("error")
+                }
+                else
+                {
+                    console.log(body);
                 res.send(body);
+                }
+                
             }); 
         });
     }
@@ -63,8 +71,15 @@ app.get('/query',(req,res)=>{
                 body += data;
             });
             response.on('end',()=>{
-                //console.log(body)
-                rawdata=JSON.parse(body);
+                if(body=='{"detail":"Not found."}')
+                {   
+                    console.log("wrong ticker")
+                    res.send("error")}
+                else
+                {
+                    console.log(body)
+                    rawdata=JSON.parse(body);
+                    console.log(rawdata.length)
                 newdata=[]
                 if(rawdata.length==0)
                 {
@@ -81,6 +96,9 @@ app.get('/query',(req,res)=>{
                 console.log(body);
                 res.send(JSON.stringify(newdata));
                 }
+                }
+                //console.log(body)
+                
                 //console.log(typeof(rawdata[0]["date"]))
                 
             });
@@ -102,7 +120,13 @@ app.get('/query',(req,res)=>{
                 body += data;
             });
             response.on('end',()=>{
-                rawdata=JSON.parse(body);
+                if(body=='{"detail":"Not found."}')
+                {
+                    res.send("error")
+                }
+                else
+                {
+                    rawdata=JSON.parse(body);
                 newdata=[]
                 console.log(typeof(rawdata[0]["date"]))
                 //res.send(body)
@@ -114,6 +138,8 @@ app.get('/query',(req,res)=>{
                 console.log(body);
                 res.send(JSON.stringify(newdata));
                 //res.send(body);
+                }
+                
             });
         });
     }
@@ -126,7 +152,13 @@ app.get('/query',(req,res)=>{
                 body += data;
             });
             response.on('end',()=>{
-                console.log(body);
+                if(body=="[]")
+                {
+                    res.send("error")
+                }
+                else
+                {
+                    console.log(body);
                 rawnews = JSON.parse(body)["articles"];
                 newnews = []
                 for(var i=0;i!=rawnews.length;i++)
@@ -135,6 +167,8 @@ app.get('/query',(req,res)=>{
                 }
                 res.send(JSON.stringify(newnews));
                 console.log(rawnews.length)
+                }
+                
             }); 
         });
     }

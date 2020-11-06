@@ -29,9 +29,9 @@ export class DetailNewsComponent implements OnInit {
   getnews(){
     this.dataservice.rendernews(this.ticker).subscribe(res=>{
       console.log(res)
-      for(var i=0;i!=res.length;i++)
+      for(var i=0;i!=Object.keys(res).length;i++)
       {
-        var newnewsitem:detailnewsitem={};
+        var newnewsitem:detailnewsitem={url:"",title:"",description:"",source:"",published:"",image:""};
         newnewsitem.description=res[i].description;
         newnewsitem.title=res[i].title;
         newnewsitem.url=res[i].url;

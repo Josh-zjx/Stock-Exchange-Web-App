@@ -10,5 +10,5 @@
         <p>cp:{{item.changepercent}} </p>
     </div>
     -->
-    <app-watch-list-item *ngFor="let item of watchlistitems" [item]="item" (deleteitem)="deleteitem($event.name)"></app-watch-list-item>
+    <app-watch-list-item *ngFor="let item of watchlistitems" [item]="item" (deleteitem)="deleteitem($event)"></app-watch-list-item>
 </div>

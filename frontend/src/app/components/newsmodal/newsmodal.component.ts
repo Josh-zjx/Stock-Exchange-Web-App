@@ -9,7 +9,7 @@ import { detailnewsitem } from '../../models/remotedata';
 })
 export class NewsmodalComponent implements OnInit {
   @Input() news:detailnewsitem;
-  constructor(activeModal:NgbActiveModal) { }
+  constructor(public activeModal:NgbActiveModal) { }
     
   ngOnInit(): void {
   }

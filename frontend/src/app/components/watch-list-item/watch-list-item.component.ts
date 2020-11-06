@@ -15,6 +15,7 @@ export class WatchListItemComponent implements OnInit {
   ngOnInit(): void {
   }
   delete(item:watchlistitem){
+    //console.log(`please delete ${item.ticker}`)
     this.deleteitem.emit(item.ticker);
   }
   navidetail(item:watchlistitem):void{

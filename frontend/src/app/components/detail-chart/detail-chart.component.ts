@@ -17,7 +17,7 @@ HC_stock(Highcharts);
   styleUrls: ['./detail-chart.component.css']
 })
 export class DetailChartComponent implements OnInit {
-@Input() ticker:string;
+@Input() ticker:string="";
   constructor(private dataservice:DetaildataService) { }
   histdata=[];
   ohlcdata = []
@@ -35,7 +35,7 @@ export class DetailChartComponent implements OnInit {
     this.dataservice.rendercharts(this.ticker).subscribe(res=>{
       console.log(res)
       
-      for(var i=0;i!=res.length;i++)
+      for(var i=0;i!=Object.keys(res).length;i++)
       {
           this.ohlcdata.push([res[i][0],res[i][1],res[i][2],res[i][3],res[i][4]])
           this.volumedata.push([res[i][0],res[i][5]])

@@ -19,25 +19,37 @@ export class WatchlistdataService {
 
   addwatchlist(ticker:string):void{
     var original = this.getwatchlist();
-    console.log(original)
+    //console.log(original)
     original.push({ticker:ticker});
     this.localOP.setlocal("watchlist",JSON.stringify(original))
   };
   deletewatchlist(ticker:string):void{
     var original = this.getwatchlist();
-    var index = original.indexOf({ticker:ticker});
-    original.splice(index);
+    //var index = original.indexOf({ticker:ticker});
+    for(var i=0;i!=original.length;i++)
+    {
+      if(original[i].ticker==ticker)
+      {
+        //console.log(`deleting${ticker}`)
+        original.splice(i,1);
+        break;
+      }
+    }    
+    //console.log(original)
     this.localOP.setlocal("watchlist",JSON.stringify(original));
   };
   inwatchlist(ticker:string):boolean{
     var original = this.getwatchlist();
-    var index = original.indexOf({ticker:ticker});
-    if(index>-1){
-      return true;
+    //console.log(original)
+    for(var i=0;i!=original.length;i++)
+    {
+      if(original[i].ticker==ticker)
+      {
+        return true
+      }
+
     }
-    else{
-      return false;
-    }
+    return false;
   };
   getwatchlist():localwatchlist[]{
     var rawstring = this.localOP.getlocal("watchlist");
@@ -52,7 +64,7 @@ export class WatchlistdataService {
   renderwatchlist():watchlistitem[]{
     var list:Observable<object>[] = []; 
     var namelist = this.getwatchlist();
-    console.log(namelist);
+    //console.log(namelist);
     var watchlist={};
     var watchlistitems:watchlistitem[]=[];
     for(var i=0;i!=namelist.length;i++)
@@ -61,7 +73,7 @@ export class WatchlistdataService {
       list.push(this.remoteOP.getremote(namelist[i].ticker,"daily"));
       list.push(this.remoteOP.getremote(namelist[i].ticker,"iex"));
     }
-    console.log(watchlist)
+    //console.log(watchlist)
     var allob:Observable<object[]>=forkJoin(list);
     allob.subscribe(res=>{
       var parsedstring;
@@ -74,7 +86,7 @@ export class WatchlistdataService {
         }
         else
         {
-          console.log(parsedstring[0]["ticker"])
+          //console.log(parsedstring[0]["ticker"])
           watchlist[parsedstring[0]["ticker"]].currentprice=parsedstring[0]["last"];
           watchlist[parsedstring[0]["ticker"]].change=parsedstring[0]["last"]-parsedstring[0]["prevClose"];
           watchlist[parsedstring[0]["ticker"]].changepercent=(parsedstring[0]["last"]-parsedstring[0]["prevClose"])/parsedstring[0]["prevClose"];

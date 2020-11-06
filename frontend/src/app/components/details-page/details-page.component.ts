@@ -4,6 +4,10 @@ import {DetaildataService} from '../../services/detaildata.service';
 import {WatchlistdataService} from '../../services/watchlistdata.service';
 import {PortfoliodataService} from '../../services/portfoliodata.service';
 import * as Highcharts from 'highcharts/highstock'
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BuymodalComponent } from '../buymodal/buymodal.component';
+import {order} from '../../models/portfoliodata'
+import { Router } from '@angular/router' 
 
 @Component({
   selector: 'app-details-page',
@@ -13,44 +17,64 @@ import * as Highcharts from 'highcharts/highstock'
 export class DetailsPageComponent implements OnInit {
   ticker:string="NVDA";
   updatechart:boolean=false;
+  isvalid:boolean=true;
   stockChart:string="stockChart";
   date:string="2020-02-02";
-  marketopen:boolean;
+  inwatchlist:boolean=false;
+  marketopen:boolean=false;
   dailydata:number[][]=[];
-  detaildesc:detaildesc={};
-  detailclose:detailclose={};
-  detailopen:detailopen={};
+  detaildesc:detaildesc={ticker:"",name:"",exchangecode:"",description:"",startdate:""};
+  detailclose:detailclose={last:0,change:0,changepercent:0,lasttimestamp:"",open:0,high:0,low:0,prevclose:0,volume:0};
+  detailopen:detailopen={mid:0,askprice:0,asksize:0,bidprice:0,bidsize:0};
 
-  constructor(private detaildata:DetaildataService,private portfoliodata:PortfoliodataService,private watchlistdata:WatchlistdataService) { }
+  constructor(private router:Router,private modalService:NgbModal,private detaildata:DetaildataService,private portfoliodata:PortfoliodataService,private watchlistdata:WatchlistdataService) { }
 
   ngOnInit(): void {
     //console.log(this.detaildata.renderdailycharts("AAPL"))
     //this.dailydata=this.detaildata.renderdailycharts("AAPL")
+    console.log(this.router.url.slice(9))
+    this.ticker=this.router.url.slice(9)
     this.getdetail()
-    this.renderdacdata(-1);
+    
     //console.log(this.dailydata)
     
   }
-  iswatchlist(){
-    this.watchlistdata.inwatchlist(this.ticker)
+  iswatchlist():boolean{
+    return this.watchlistdata.inwatchlist(this.ticker)
   }
   addwatchlist(){
     this.watchlistdata.addwatchlist(this.ticker)
+    this.inwatchlist=true;
   }
   deletewatchlist(){
     this.watchlistdata.deletewatchlist(this.ticker)
+    this.inwatchlist=false;
   }
-  buy(){
-
+  buy(neworder:order){
+    this.portfoliodata.buy(neworder.name,neworder.amount,neworder.price);
+    //this.getportfolio();
   }
-  openbuy(){
-    
+  openbuy() {
+    const modalRef = this.modalService.open(BuymodalComponent);
+    modalRef.componentInstance.name = this.detaildesc.ticker;
+    modalRef.componentInstance.price = this.detailclose.last;
+    modalRef.componentInstance.buyemitter.subscribe((neworder)=>{
+      this.buy(neworder);
+    })
   }
   getdetail(){
     this.detaildata.rendersummary(this.ticker).subscribe(res=>{
-      console.log("daily info")
-      console.log(res[0])
-      console.log(res[1])
+      //console.log("daily info")
+      //if(res=="err")
+      console.log(res)
+      console.log("analyze res")
+      if(Object.keys(res[1]).length==0)
+      {
+        this.isvalid=false;
+        console.log("wrong")
+        return
+      }
+      
       this.detaildesc.ticker= res[0]["ticker"]
       this.detaildesc.exchangecode=res[0]["exchangeCode"];
       this.detaildesc.description = res[0]["description"];
@@ -70,20 +94,33 @@ export class DetailsPageComponent implements OnInit {
       this.detailopen.bidsize = res[1][0]["bidSize"];
       this.detailopen.mid = res[1][0]["mid"];
       this.detailclose.lasttimestamp=res[1][0]["timestamp"];
+      this.isvalid=true;
       var date= new Date();
+      this.renderdacdata(0);
       if((Date.now()-Date.parse(this.detailclose.lasttimestamp))>60000)
       {
+        //console.log((Date.now()-Date.parse(this.detailclose.lasttimestamp)))
         this.marketopen = false;
       }
       else
       {
         this.marketopen = true;
       }
+      if(this.iswatchlist())
+      {
+        
+        this.inwatchlist=true;
+      }
+      else{
+        //console.log(this.watchlistdata.getwatchlist())
+        this.inwatchlist=false;
+      }
     })
   }
   renderdacdata(offset:number=0){
     this.detaildata.renderdailycharts(this.ticker,offset).subscribe(res=>{
-      //console.log(res)
+      console.log(res)
+
       if(res==[])
       {
         this.renderdacdata(offset-1)
