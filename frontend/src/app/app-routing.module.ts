@@ -6,10 +6,11 @@ import { PortfolioPageComponent } from './components/portfolio-page/portfolio-pa
 import { DetailsPageComponent } from './components/details-page/details-page.component';
 
 const routes: Routes = [
-  {path: '',component:SearchPageComponent},
+  
   {path: 'portfolio',component:PortfolioPageComponent},
   {path: 'watchlist',component:WatchListPageComponent},
-  {path: 'details/:ticker',component:DetailsPageComponent}
+  {path: 'details/:ticker',component:DetailsPageComponent},
+  {path: '',component:SearchPageComponent}
 ];
 
 @NgModule({

@@ -1,3 +1,20 @@
 .nav-link{
     text-align: right;
+    color: aliceblue;
+    outline:none;
+    padding-right:5px;
+}
+.nav-link.ml-auto.activebutton{
+    border-radius: 5px;
+    border:1px solid white;
+    outline-color: white;
+    outline:none;
+    color:white;
+}
+.col{
+    border:1px;
+    border-radius: 5px;
+    outline:1px;
+    padding:0px 0px 0px 0px;
+    
 }

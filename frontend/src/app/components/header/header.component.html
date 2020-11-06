@@ -7,9 +7,12 @@
       <div class="navbar-nav ml-auto">
           <!--<div *ngFor="let name of namelist" [class.active]="name === selectedSwitch"><a  routerLink="/heroes-list" routerLinkActive="activebutton" class="nav-link ml-auto" href="">{{name}}</a>
           </div>-->
-          <a class="nav-link ml-auto" routerLink="/" routerLinkActive="activebutton">Search</a>
-          <a class="nav-link ml-auto" routerLink="/watchlist" routerLinkActive="activebutton">Watchlist</a>
-          <a class="nav-link ml-auto" routerLink="/portfolio" routerLinkActive="activebutton">Portoflio</a>
+          <div class="col"><a class="nav-link ml-auto" [routerLinkActiveOptions]="{exact:
+            true}" routerLink="/" routerLinkActive="activebutton">Search</a></div>
+          <div class="col"><a class="nav-link ml-auto" [routerLinkActiveOptions]="{exact:
+            true}" routerLink="/watchlist" routerLinkActive="activebutton">Watchlist</a></div>
+          <div class="col"><a class="nav-link ml-auto" [routerLinkActiveOptions]="{exact:
+            true}" routerLink="/portfolio" routerLinkActive="activebutton">Portoflio</a></div>
           
       </div>
     </div>

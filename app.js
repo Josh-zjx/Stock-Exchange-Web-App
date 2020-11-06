@@ -152,12 +152,12 @@ app.get('/query',(req,res)=>{
                 body += data;
             });
             response.on('end',()=>{
-                if(body=="[]")
-                {
-                    res.send("error")
-                }
-                else
-                {
+               
+                    status = JSON.parse(body)["status"]
+                    if(status=="error")
+                    {
+                        res.send("error")
+                    }else{
                     console.log(body);
                 rawnews = JSON.parse(body)["articles"];
                 newnews = []
