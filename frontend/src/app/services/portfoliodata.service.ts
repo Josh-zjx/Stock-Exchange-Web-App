@@ -3,79 +3,98 @@ import { Observable, of,forkJoin} from 'rxjs';
 import { LocaldataService } from './localdata.service'
 import { RemotedataService } from './remotedata.service'
 import {localportfolio,portfolioitem} from '../models/portfoliodata';
-import { order } from '../models/portfoliodata'
+import { order } from '../models/portfoliodata';
+
+
+interface record{
+  ticker:string;
+  share:number;
+  cost:number;
+}
 @Injectable({
   providedIn: 'root'
 })
-export class PortfoliodataService {
-  public portfoliodata:object;
-  constructor(private localOP:LocaldataService,private remoteOP:RemotedataService) {
-    this.localOP.setlocal("portfolio","{}");
-    this.portfoliodata={};
-    this.buy("AAPL",10,50);
-    this.buy("IBM",10,50);
-    this.buy("MSFT",10,50);
 
+export class PortfoliodataService {
+  constructor(private localOP:LocaldataService,private remoteOP:RemotedataService) {
   }
   buy(name:string, amount:number,price:number):void{
     //console.log(`buying ${name} in ${amount} for ${price} each`)
-    if(this.inportfolio(name))
+    var data = this.getportfolio()
+    var index=-1;
+    for(var i=0;i!=data.length;i++)
     {
-      //console.log(typeof(this.portfoliodata[name].share))
-      //console.log(typeof(amount))
-      this.portfoliodata[name].share=this.portfoliodata[name].share+amount;
-      this.portfoliodata[name].cost=this.portfoliodata[name].cost+price*amount;
+      if(data[i].ticker==name)
+      {
+        index = i;
+        break;
+      }
     }
-    else{
-      var newport:localportfolio={ticker:name,share:amount,cost:price*amount}
-      this.portfoliodata[name]=newport;
+    if(index==-1)
+    {
+      var newrecord:record={ticker:name,share:amount,cost:price*amount};
+      data.push(newrecord)
     }
-    //console.log(this.portfoliodata[name].share)
-    this.localOP.setlocal("portfolio",JSON.stringify(this.portfoliodata));
-    this.getportfolio()
+    else
+    {
+      data[i].share +=amount;
+      data[i].cost +=amount*price;
+    }
+    
+    this.localOP.setlocal("portfolio",JSON.stringify(data));
+    this.comb()
+    //this.getportfolio()
   }
   sell(name:string,amount:number,price:number):void{
-    this.portfoliodata[name].share-=amount;
-    this.portfoliodata[name].cost-=price*amount;
-    if(this.portfoliodata[name].share==0)
+    var data = this.getportfolio()
+    var index=-1;
+    for(var i=0;i!=data.length;i++)
     {
-      delete this.portfoliodata[name];
+      if(data[i].ticker==name)
+      {
+        index = i;
+        break;
+      }
     }
-    console.log(this.portfoliodata)
-    this.localOP.setlocal("portfolio",JSON.stringify(this.portfoliodata))
-    this.getportfolio()
+    data[i].share-=amount;
+    data[i].cost-=price*amount;
+    if(data[i].share==0)
+    {
+      data.splice(i,1)
+    }
+    //console.log(this.portfoliodata)
+    this.localOP.setlocal("portfolio",JSON.stringify(data))
+    //this.getportfolio()
   }
-  inportfolio(name:string):boolean{
-    return this.portfoliodata.hasOwnProperty(name);
+  comb(){
+    var data = this.getportfolio()
+    data.sort((a,b)=>{
+      return a.ticker <b.ticker?-1:1;
+    })
+    console.log(data)
+    this.localOP.setlocal("portfolio",JSON.stringify(data))
   }
-  getportfolio():void{
+  getportfolio():record[]{
     var rawstring:string= this.localOP.getlocal("portfolio");
     if(rawstring==null)
     {
       this.localOP.initializelocal("portfolio");
       rawstring = this.localOP.getlocal("portfolio");
+      
     }
-    
-    this.portfoliodata=JSON.parse(rawstring);
+    console.log(rawstring)
+
+    return JSON.parse(rawstring);
   }
   renderportfolio():Observable<object[]>{
-    console.log("rendering")
-    
+    console.log("rendering portfolio")
+    var data = this.getportfolio()
+    console.log(data)
     var list:Observable<object>[]=[];
-    for(var i=0;i!=Object.keys(this.portfoliodata).length;i++)
+    for(var i=0;i!=data.length;i++)
     {
-      /*tmp[Object.keys(this.portfoliodata)[i]]={
-        ticker:Object.keys(this.portfoliodata)[i],
-        name:"",
-        Quantity:this.portfoliodata[Object.keys(this.portfoliodata)[i]].share,
-        averagecost:this.portfoliodata[Object.keys(this.portfoliodata)[i]].cost/this.portfoliodata[Object.keys(this.portfoliodata)[i]].share,
-        totalcost:this.portfoliodata[Object.keys(this.portfoliodata)[i]].cost,
-        change:0,
-        currentprice:0,
-        marketvalue:0,
-      }*/
-      list.push(this.remoteOP.getremote(Object.keys(this.portfoliodata)[i],"iex"));
-      list.push(this.remoteOP.getremote(Object.keys(this.portfoliodata)[i],"daily"));
+      list.push(this.remoteOP.getremote(data[i].ticker,"iex"));
+      list.push(this.remoteOP.getremote(data[i].ticker,"daily"));
       
     }
     //console.log(tmp)

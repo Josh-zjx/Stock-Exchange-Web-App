@@ -16,19 +16,19 @@ export class DetailNewsComponent implements OnInit {
   constructor(private dataservice:DetaildataService,private modalService:NgbModal) { }
 
   ngOnInit(): void {
-    console.log("rendering news")
+   //console.log("rendering news")
     this.getnews()
   }
   opennews(inputnews:detailnewsitem)
   {
-      console.log("open modal news")
+     //console.log("open modal news")
       const modalRef = this.modalService.open(NewsmodalComponent);
       modalRef.componentInstance.news = inputnews;
       
   }
   getnews(){
     this.dataservice.rendernews(this.ticker).subscribe(res=>{
-      console.log(res)
+     //console.log(res)
       for(var i=0;i!=Object.keys(res).length;i++)
       {
         var newnewsitem:detailnewsitem={url:"",title:"",description:"",source:"",published:"",image:""};

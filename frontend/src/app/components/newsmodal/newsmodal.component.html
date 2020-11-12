@@ -1,19 +1,33 @@
 
     <div>
         <div class="modal-header">
-            <h2 class="modal-title">{{this.news.source}}</h2>
-            <h3 class="modal-title">{{this.news.published}}</h3>
+            <div style="padding:0px 0px 0px 10px;" class="row">
+              <h1 style="padding:0px 0px 0px 10px;"class="modal-title">{{this.news.source}}<br> <small class="text-muted">{{this.news.published|date:"MMMM dd,yyyy"}}</small></h1>
+            </div>
+           
+            
             <button type="button"  class="close" aria-hidden="true" style="outline:none;" aria-label="Close" (click)="this.activeModal.dismiss('Cross click')">
               &times;
             </button>
           </div>
           <div class="modal-body">
-            <b>{{this.news.title}}</b>
+            <h2>{{this.news.title}}</h2>
             <p>{{this.news.description}}</p>
-            <p>for more detail click</p><a href={{this.news.url}}>here</a>
+            <span>for more detail click  <a target="_blank" href={{this.news.url}}>here</a></span>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer" style="text-align: left;">
             
-            
+            <div class="col mr-auto" style="border:1px grey">
+              Share<br>
+              <div class="row">
+              <a class="twitter-share-button" target="_blank"
+  href='https://twitter.com/intent/tweet?text={{this.news.title}}%20{{this.news.url}}'>
+  <i class="fa fa-twitter" style="font-size:36px;color:(29,161,242)"></i></a>
+
+  <div class="fb-share-button" data-layout="button_count" data-size="small"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{this.news.url}}&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore"><i class="fa fa-facebook-square" style="font-size:36px;color:#3b5998"></i></a></div>
+  
+              </div>     </div>
           </div>
+          <div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_CN/sdk.js#xfbml=1&version=v8.0" nonce="AUS7DArB"></script>
         </div>

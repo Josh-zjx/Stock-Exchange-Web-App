@@ -5,14 +5,18 @@
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <div class="card-body mt-n5"(click)="navidetail(item)">
+    <div class="card-body mt-n5" style="cursor: pointer;" (click)="navidetail(item)">
       <div class="row" style="padding-top:10px">
-        <div class="col" style="text-align: left;"><h3>{{item.ticker}}</h3></div>
-        <div class="col" style="text-align: right;"><h3 [ngStyle]="{'color': (item.change>0) ? 'green' :   'red'}">{{item.currentprice| number : '1.0-3'}}</h3></div>
+        <div class="col" style="text-align: left;"><h1>{{item.ticker}}</h1></div>
+        <div class="col" style="text-align: right;"><h1 [ngStyle]="{'color': (item.change>0) ? 'green' : (item.change<0)? 'red':'black'}">{{item.currentprice| number : '1.0-3'}}</h1></div>
     </div>
     <div class="row">
-        <div class="col" style="text-align: left;">{{item.name}}</div>
-        <div class="col" style="text-align: right;" [ngStyle]="{'color': (item.change>0) ? 'green' :   'red'}">{{item.change| number : '1.0-3'}} ({{item.changepercent| number : '1.0-3'}})</div>
+        <div class="col" style="text-align: left;"><h2>{{item.name}}</h2></div>
+        <div class="col" style="text-align: right;" [ngStyle]="{'color': (item.change>0) ? 'green' : (item.change<0)? 'red':'black'}"><h2><svg *ngIf="item.change>0"width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-up-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
+        </svg><svg *ngIf="item.change<0" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+        </svg>{{item.change| number : '1.0-2'}} ({{item.changepercent| percent : '1.0-3'}})</h2></div>
     </div>
     </div>
   </div>

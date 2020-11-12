@@ -36,10 +36,14 @@
                       </svg>
                     </button>
                     
-                    </p></span><span><h1 [ngStyle]="{'color': (this.detailclose.change>0) ? 'green' :   'red'}">{{this.detailclose.last| number : '1.0-3'}}</h1></span>
+                    </p></span><span><h1 style="font-size:2.5rem;font-weight:150;line-height:1.2" [ngStyle]="{'color': (this.detailclose.change>0) ? 'green' : (this.detailclose.change<0)? 'red':'black'}">{{this.detailclose.last| number : '1.0-3'}}</h1></span>
                 </li>
                 <li class="list-group-item border-0 d-flex justify-content-between" style="padding-bottom:0px;padding-top:0px">
-                    <span><h2 class="text-muted">{{this.detaildesc.name}}</h2></span><span><h2 [ngStyle]="{'color': (this.detailclose.change>0) ? 'green' :   'red'}">{{this.detailclose.change| number : '1.0-3'}}</h2></span>
+                    <span><h1 class="text-muted">{{this.detaildesc.name}}</h1></span><span><h2 [ngStyle]="{'color': (this.detailclose.change>0) ? 'green' : (this.detailclose.change<0)? 'red':'black'}"><svg *ngIf="this.detailclose.change>0"width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-up-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
+                      </svg><svg *ngIf="this.detailclose.change<0" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-caret-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                      </svg> {{this.detailclose.change| number : '1.0-3'}}({{this.detailclose.changepercent|percent:'1.0-2'}})</h2></span>
                 </li>
                 <li class="list-group-item border-0 d-flex justify-content-between" style="padding-bottom:0px;padding-top:0px">
                     <span>{{this.detaildesc.exchangecode}}</span><span>{{this.now|date:'yyyy-MM-dd H:mm:ss':'-0800'}}</span>
@@ -51,16 +55,16 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-4"></div>
-        <div class="col-4">
-        <div *ngIf="marketopen" class="col text-center">
-            <p style="background-color: green;">Market Open</p>
+        
+        <div class="col"style="text-align:center">
+        
+            <p *ngIf="marketopen"> <span style="background-color: lightgreen;">Market is Open</span></p>
+        
+        
+            <p  *ngIf="!marketopen"><span style="background-color: pink;">Market Closed on {{this.closedtime|date:'yyyy-MM-dd H:mm:ss':'-0800'}}</span></p>
+        
         </div>
-        <div *ngIf="!marketopen" class="col text-center">
-            <p style="background-color: red;">Market Closed at {{this.closedtime|date:'yyyy-MM-dd H:mm:ss':'-0800'}}</p>
-        </div>
-        </div>
-        <div class="col-4"></div>
+    
     </div>
 <mat-tab-group mat-stretch-tabs mat-align-tabs="center" animationDuration="0ms">
     <mat-tab label="Summary">
@@ -68,7 +72,7 @@
         <div class="container">
             <div class="row">
             <div class="col">
-                <div class="row">
+                <div class="row" style="padding:30px">
                     <div class="col">
                         <table class="" style="text-align: left;">
                             <tr class="">
@@ -108,9 +112,10 @@
                         </table>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" style="padding: 20px;">
                     <div class="col">
-                        <h1>Company's Description</h1>
+
+                        <span style="text-align: center;"><h1>Company's Description</h1></span>
                         <p>Start Date:{{this.detaildesc.startdate}}</p>
                         <p>{{this.detaildesc.description}}</p>
                     </div>
@@ -124,7 +129,7 @@
            [(update)]="updatechart"
            [options] = "chartOptions" 
            [callbackFunction]="chartCallback"
-           style = "height:500px;display: block;">
+           style = "height:800px;display: block;">
         </highcharts-chart>
             </div>
         

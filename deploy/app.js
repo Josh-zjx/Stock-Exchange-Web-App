@@ -6,7 +6,7 @@ var url = require('url');
 const news_token = '7f20794f88a54122a84190892f8641e4'
 const stock_token = 'b121787d28d3e2a8ce8f38860d189dd20b9477b4'
 var app = express();
-app.use(express.static(process.cwd()+"/frontend/dist/frontend/"));
+app.use(express.static(process.cwd()+"/frontend"));
 app.use(cors());
 const port = 8080;
 
@@ -194,8 +194,8 @@ app.get('/query',(req,res)=>{
         return 0;
     }
 })
-app.get('/',(req,res)=>{
-    fs.readFile("./frontend/dist/frontend/index.html",(err,data)=>{
+app.get('*',(req,res)=>{
+    fs.readFile("./frontend/index.html",(err,data)=>{
         if(err)
         {
             console.log("Search File read error");

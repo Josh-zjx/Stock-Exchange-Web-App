@@ -5,6 +5,7 @@ import { BuymodalComponent } from '../buymodal/buymodal.component';
 import { SellmodalComponent } from '../sellmodal/sellmodal.component';
 import { order } from '../../models/portfoliodata'
 import { Router } from '@angular/router';
+import {of,Subject} from 'rxjs'
 @Component({
   selector: 'app-portfolio-page-item',
   templateUrl: './portfolio-page-item.component.html',
@@ -14,6 +15,7 @@ export class PortfolioPageItemComponent implements OnInit {
   @Input() item:portfolioitem;
   @Output() buyemitter= new EventEmitter();
   @Output() sellemitter = new EventEmitter();
+  dataupdate: Subject<number> = new Subject<number>();
   constructor(private modalService:NgbModal,private router:Router) { }
 
   ngOnInit(): void {
@@ -22,6 +24,7 @@ export class PortfolioPageItemComponent implements OnInit {
     const modalRef = this.modalService.open(BuymodalComponent);
     modalRef.componentInstance.name = this.item.ticker;
     modalRef.componentInstance.price = this.item.currentprice;
+    modalRef.componentInstance.updateevent = of(this.item.currentprice)
     modalRef.componentInstance.buyemitter.subscribe((neworder)=>{
       this.buy(neworder);
     })

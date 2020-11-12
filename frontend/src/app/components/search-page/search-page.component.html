@@ -10,7 +10,7 @@
         <div class="col" style="text-align: center;">
             <form class="example-form">
                 
-                  <input >
+                  
                   <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
                     <mat-option *ngIf="isloading" class="is-loading"><mat-spinner diameter="50"></mat-spinner></mat-option>
                     <div *ngIf="!isloading">
@@ -23,12 +23,13 @@
             <div class="wrap">
                 <div class="search">
                    <input type="text" 
+                   style="outline:none;border-right:none"
                    aria-label="Number"
                    matInput
                    [formControl]="myControl"
                    [matAutocomplete]="auto" [(ngModel)]="ticker" class="searchTerm" placeholder="Enter stock name">
                    <button type="submit" class="searchButton" (click)="navi()">
-                     <i class="fa fa-search"></i>
+                     <i class="fa fa-search" style="outline:none;border:0px;"></i>
                   </button>
                 </div>
              </div>

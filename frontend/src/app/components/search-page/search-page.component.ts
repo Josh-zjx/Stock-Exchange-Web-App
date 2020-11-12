@@ -22,8 +22,8 @@ export class SearchPageComponent implements OnInit {
     this.myControl.valueChanges.pipe(debounceTime(50)).subscribe(
       ()=>{
         this.isloading=true;
-        console.log(this.ticker)
-        console.log("valuechange")
+       //console.log(this.ticker)
+       //console.log("valuechange")
         this.getnewac(this.ticker)
       }
     )
@@ -40,7 +40,7 @@ export class SearchPageComponent implements OnInit {
     if(ticker!="")
     {
       this.remoteOP.getremote(ticker,"ac").subscribe(res=>{
-        console.log(`updated for ${ticker}`)
+       //console.log(`updated for ${ticker}`)
         if(Object.keys(res).length==0)
         {
           this.isloading=false;

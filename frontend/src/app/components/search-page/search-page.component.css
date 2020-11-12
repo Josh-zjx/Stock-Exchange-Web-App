@@ -23,33 +23,37 @@
 
 .search {
     width: 100%;
+    border: 3px solid slateblue;
+    border-radius: 20px 20px 20px 20px;
     position: relative;
     display: flex;
   }
   
   .searchTerm {
     width: 100%;
-    border: 3px solid slateblue;
-    border-right: none;
+    border:none;
+    //border-right: none;
     padding: 5px,5px,5px,5px;
     height: px;
-    border-radius: 20px 0 0 20px;
     outline: none;
     color:black;
+    border-radius: 20px 20px 20px 20px;
   }
   
   .searchTerm:focus{
-    color: slateblue;
+    color:black;
   }
   
   .searchButton {
     width: 40px;
     height: 36px;
-    border: 3px solid slateblue;
-    border-left:none;
+    
+    border:none;
     background:inherit;
     text-align: center;
     outline:none;
+    padding-left:0px;
+    margin-left:0px;
     color: #000;
     border-radius: 0 20px 20px 0;
     cursor: pointer;

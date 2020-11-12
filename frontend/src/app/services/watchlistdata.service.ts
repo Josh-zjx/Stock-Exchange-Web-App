@@ -11,10 +11,10 @@ import { WatchListItemComponent } from '../components/watch-list-item/watch-list
 })
 export class WatchlistdataService {
   constructor(private localOP:LocaldataService,private remoteOP:RemotedataService) {
-    localOP.initializelocal("watchlist");
-    this.addwatchlist("AAPL");
-    this.addwatchlist("IBM");
-    this.addwatchlist("NVDA");
+    //localOP.initializelocal("watchlist");
+    //this.addwatchlist("AAPL");
+    //this.addwatchlist("IBM");
+    //this.addwatchlist("NVDA");
   }
 
   addwatchlist(ticker:string):void{
@@ -22,6 +22,7 @@ export class WatchlistdataService {
     //console.log(original)
     original.push({ticker:ticker});
     this.localOP.setlocal("watchlist",JSON.stringify(original))
+    this.comb()
   };
   deletewatchlist(ticker:string):void{
     var original = this.getwatchlist();
@@ -51,6 +52,15 @@ export class WatchlistdataService {
     }
     return false;
   };
+  comb(){
+    var data=this.getwatchlist()
+    //data.sort()
+    data.sort((a,b)=>{
+      return a.ticker <b.ticker?-1:1;
+    })
+    console.log(data)
+    this.localOP.setlocal("watchlist",JSON.stringify(data))
+  }
   getwatchlist():localwatchlist[]{
     var rawstring = this.localOP.getlocal("watchlist");
     if(rawstring==null)

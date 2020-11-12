@@ -20,7 +20,7 @@ export class SellmodalComponent implements OnInit {
   ngOnInit(): void {
   }
   disablebuy():boolean{
-    return this.numb>this.share;
+    return this.numb<=0||this.numb>this.share;
   }
   buy():void{
     if(this.disablebuy())

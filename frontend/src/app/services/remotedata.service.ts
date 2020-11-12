@@ -7,7 +7,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class RemotedataService {
 
-  private apihost:string="http://localhost:8080/query";
+  private apihost:string="https://mynodejsproject-135423.wl.r.appspot.com/query";
   constructor(private http:HttpClient) { }
 
   getremote(ticker:string,type:string):Observable<object>{

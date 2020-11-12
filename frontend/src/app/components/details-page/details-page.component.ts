@@ -4,6 +4,7 @@ import {DetaildataService} from '../../services/detaildata.service';
 import {WatchlistdataService} from '../../services/watchlistdata.service';
 import {PortfoliodataService} from '../../services/portfoliodata.service';
 import * as Highcharts from 'highcharts/highstock'
+import { Subject } from 'rxjs'
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BuymodalComponent } from '../buymodal/buymodal.component';
 import {order} from '../../models/portfoliodata'
@@ -19,6 +20,7 @@ export class DetailsPageComponent implements OnInit {
   updatechart:boolean=false;
   isvalid:boolean=true;
   showbuy:boolean=false;
+  dataupdate: Subject<number> = new Subject<number>();
   showadd:boolean=false;
   showdel:boolean=false;
   isloading:boolean=true;
@@ -63,7 +65,7 @@ export class DetailsPageComponent implements OnInit {
     this.showadd=true;
     setTimeout(()=>{
       this.showadd=false;
-    },3000)
+    },5000)
   }
   deletewatchlist(){
     this.watchlistdata.deletewatchlist(this.ticker)
@@ -72,20 +74,24 @@ export class DetailsPageComponent implements OnInit {
     this.showadd=false;
     setTimeout(()=>{
       this.showdel=false;
-    },3000)
+    },5000)
   }
   buy(neworder:order){
     this.portfoliodata.buy(neworder.name,neworder.amount,neworder.price);
     this.showbuy=true;
+    this.portfoliodata.getportfolio();
     setTimeout(()=>{
       this.showbuy=false;
-    },3000)
-    //this.getportfolio();
+    },5000)
+  }
+  updatemodal(){
+    this.dataupdate.next(this.detailclose.last)
   }
   openbuy() {
     const modalRef = this.modalService.open(BuymodalComponent);
     modalRef.componentInstance.name = this.detaildesc.ticker;
     modalRef.componentInstance.price = this.detailclose.last;
+    modalRef.componentInstance.updateevent=this.dataupdate;
     modalRef.componentInstance.buyemitter.subscribe((neworder)=>{
       this.buy(neworder);
     })
@@ -125,6 +131,7 @@ export class DetailsPageComponent implements OnInit {
       this.detailclose.lasttimestamp=res[1][0]["timestamp"];
       this.now = new Date()
       this.isvalid=true;
+      this.updatemodal()
       this.isloading=false;
       var date= new Date();
       this.renderdacdata(0);
@@ -151,9 +158,10 @@ export class DetailsPageComponent implements OnInit {
   }
   renderdacdata(offset:number=0){
     this.detaildata.renderdailycharts(this.ticker,offset).subscribe(res=>{
+      console.log(offset)
       console.log(res)
-
-      if(res==[])
+      console.log(Object.keys(res).length)
+      if(Object.keys(res).length==0)
       {
         this.renderdacdata(offset-1)
       }
@@ -179,7 +187,6 @@ export class DetailsPageComponent implements OnInit {
   highcharts = Highcharts;
    chartOptions = { 
       charts:{
-        zoomType:"",
         reflow:"true"
       }
       ,
@@ -192,6 +199,9 @@ export class DetailsPageComponent implements OnInit {
             visibility: 'hidden'
         }
     },
+    navigator: {
+      height:60
+  },
 
       title: {
           text: `${this.detaildesc.ticker}`
@@ -211,13 +221,13 @@ export class DetailsPageComponent implements OnInit {
             },
             chartOptions: {
                 chart: {
-                    height: 500
+                    height: 600
                 },
                 subtitle: {
                     text: null
                 },
                 navigator: {
-                    enabled: false
+                    enabled: true
                 }
             }
         }]

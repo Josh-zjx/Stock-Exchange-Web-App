@@ -8,10 +8,10 @@
       </div>
       <div class="modal-body">
         <p>Current Price:{{price}}</p>
-        Quantity <input [(ngModel)]="numb" placeholder=0/>
+        Quantity <input type="number" [(ngModel)]="numb" placeholder=0/>
       </div>
       <div class="modal-footer">
-        <p class="mr-auto mt-auto">Total Price:{{this.numb*this.price}}</p>
+        <p class="mr-auto mt-auto">Total Price:{{this.numb*this.price|number:'1.0-3'}}</p>
         <button type="button" class="btn btn-success" [class.disabled]="disablebuy()" (click)="buy()">Buy</button>
       </div>
     </div>

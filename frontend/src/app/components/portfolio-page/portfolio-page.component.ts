@@ -40,6 +40,8 @@ export class PortfolioPageComponent implements OnInit {
   buy(neworder:order){
     this.dataservice.buy(neworder.name,neworder.amount,neworder.price);
     this.getportfolio();
+    console.log(`bought`)
+    console.log(this.Portfolio)
   }
   sell(neworder:order){
     this.dataservice.sell(neworder.name,neworder.amount,neworder.price);
@@ -47,7 +49,8 @@ export class PortfolioPageComponent implements OnInit {
   }
   getportfolio(){
     this.isloading=true;
-    if(Object.keys(this.dataservice.portfoliodata).length==0)
+    var data=this.dataservice.getportfolio()
+    if(data.length==0)
       {
         this.Portfolio=[]
         this.isloading=false;
@@ -58,16 +61,16 @@ export class PortfolioPageComponent implements OnInit {
       var portfolioitems:portfolioitem[]=[];
       var tmp={};
       this.Portfolio=[]
-      
-      console.log(this.Portfolio.length)
-      for(var i=0;i!=Object.keys(this.dataservice.portfoliodata).length;i++)
+      //console.log()
+      //console.log(this.Portfolio.length)
+      for(var i=0;i!=data.length;i++)
     {
-      tmp[Object.keys(this.dataservice.portfoliodata)[i]]={
-        ticker:Object.keys(this.dataservice.portfoliodata)[i],
+      tmp[data[i].ticker]={
+        ticker:data[i].ticker,
         name:"",
-        Quantity:this.dataservice.portfoliodata[Object.keys(this.dataservice.portfoliodata)[i]].share,
-        averagecost:this.dataservice.portfoliodata[Object.keys(this.dataservice.portfoliodata)[i]].cost/this.dataservice.portfoliodata[Object.keys(this.dataservice.portfoliodata)[i]].share,
-        totalcost:this.dataservice.portfoliodata[Object.keys(this.dataservice.portfoliodata)[i]].cost,
+        Quantity:data[i].share,
+        averagecost:data[i].cost/data[i].share,
+        totalcost:data[i].cost,
         change:0,
         currentprice:0,
         marketvalue:0,
@@ -95,10 +98,10 @@ export class PortfolioPageComponent implements OnInit {
         
         
       }
-      for(var i=0;i!=Object.keys(this.dataservice.portfoliodata).length;i++)
+      for(var i=0;i!=data.length;i++)
       {
         //console.log(Object.keys(this.portfoliodata))
-        portfolioitems.push(tmp[Object.keys(this.dataservice.portfoliodata)[i]]);
+        portfolioitems.push(tmp[data[i].ticker]);
       }
       //console.log(portfolioitems)
       this.Portfolio=portfolioitems;
