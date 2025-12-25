@@ -25,40 +25,22 @@ export class WatchlistdataService {
     this.comb()
   };
   deletewatchlist(ticker:string):void{
-    var original = this.getwatchlist();
-    //var index = original.indexOf({ticker:ticker});
-    for(var i=0;i!=original.length;i++)
-    {
-      if(original[i].ticker==ticker)
-      {
-        console.log(`deleting${ticker}`)
-        original.splice(i,1);
-        break;
-      }
-    }    
-    console.log(original)
+    const original = this.getwatchlist();
+    const index = original.findIndex(item => item.ticker === ticker);
+    if(index !== -1) {
+      original.splice(index, 1);
+    }
     this.localOP.setlocal("watchlist",JSON.stringify(original));
   };
   inwatchlist(ticker:string):boolean{
-    var original = this.getwatchlist();
-    //console.log(original)
-    for(var i=0;i!=original.length;i++)
-    {
-      if(original[i].ticker==ticker)
-      {
-        return true
-      }
-
-    }
-    return false;
+    const original = this.getwatchlist();
+    return original.some(item => item.ticker === ticker);
   };
   comb(){
-    var data=this.getwatchlist()
-    //data.sort()
+    const data=this.getwatchlist()
     data.sort((a,b)=>{
       return a.ticker <b.ticker?-1:1;
     })
-    console.log(data)
     this.localOP.setlocal("watchlist",JSON.stringify(data))
   }
   getwatchlist():localwatchlist[]{

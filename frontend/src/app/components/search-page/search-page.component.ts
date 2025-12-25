@@ -19,11 +19,9 @@ export class SearchPageComponent implements OnInit {
   constructor(private router:Router,private remoteOP:RemotedataService) { }
   myControl = new FormControl()
   ngOnInit(): void {
-    this.myControl.valueChanges.pipe(debounceTime(50)).subscribe(
+    this.myControl.valueChanges.pipe(debounceTime(300)).subscribe(
       ()=>{
         this.isloading=true;
-       //console.log(this.ticker)
-       //console.log("valuechange")
         this.getnewac(this.ticker)
       }
     )
@@ -40,7 +38,6 @@ export class SearchPageComponent implements OnInit {
     if(ticker!="")
     {
       this.remoteOP.getremote(ticker,"ac").subscribe(res=>{
-       //console.log(`updated for ${ticker}`)
         if(Object.keys(res).length==0)
         {
           this.isloading=false;
@@ -48,24 +45,18 @@ export class SearchPageComponent implements OnInit {
         }
         else
         {
-          this.options=[]
-          for(var i=0;i!=Object.keys(res).length;i++)
-          {
-          
-            this.options.push({name:res[i]["name"],ticker:res[i]["ticker"]})
-          }
-        
+          this.options = Object.keys(res).map(key => ({
+            name: res[key]["name"],
+            ticker: res[key]["ticker"]
+          }));
         }
         this.isloading=false;
-
-      }
-      )
+      })
     }
     else
     {
       this.isloading=false;
       this.options=[]
     }
-    
   }
 }

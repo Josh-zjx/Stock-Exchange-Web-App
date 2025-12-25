@@ -38,22 +38,14 @@ export class DetailsPageComponent implements OnInit {
   constructor(private router:Router,private modalService:NgbModal,private detaildata:DetaildataService,private portfoliodata:PortfoliodataService,private watchlistdata:WatchlistdataService) { }
 
   ngOnInit(): void {
-    //console.log(this.detaildata.renderdailycharts("AAPL"))
-    //this.dailydata=this.detaildata.renderdailycharts("AAPL")
     this.isloading=true;
-    console.log(this.router.url.slice(9))
     this.ticker=this.router.url.slice(9)
     this.getdetail()
     setInterval(()=>{
-      if(this.marketopen)
-      {
+      if(this.marketopen) {
         this.getdetail()
       }
-
     },15000)
-    
-    //console.log(this.dailydata)
-    
   }
   iswatchlist():boolean{
     return this.watchlistdata.inwatchlist(this.ticker)
@@ -98,15 +90,9 @@ export class DetailsPageComponent implements OnInit {
   }
   getdetail(){
     this.detaildata.rendersummary(this.ticker).subscribe(res=>{
-      //console.log("daily info")
-      //if(res=="err")
-      console.log(res)
-      console.log("analyze res")
-      if(Object.keys(res[1]).length==0)
-      {
+      if(Object.keys(res[1]).length==0) {
         this.isvalid=false;
         this.isloading=false;
-        console.log("wrong")
         return
       }
       
@@ -133,49 +119,32 @@ export class DetailsPageComponent implements OnInit {
       this.isvalid=true;
       this.updatemodal()
       this.isloading=false;
-      var date= new Date();
+      const date= new Date();
       this.renderdacdata(0);
-      if((Date.now()-Date.parse(this.detailclose.lasttimestamp))>60000)
-      {
-        //console.log((Date.now()-Date.parse(this.detailclose.lasttimestamp)))
+      if((Date.now()-Date.parse(this.detailclose.lasttimestamp))>60000) {
         this.closedtime = new Date(this.detailclose.lasttimestamp)
         this.marketopen = false;
-      }
-      else
-      {
+      } else {
         this.marketopen = true;
       }
-      if(this.iswatchlist())
-      {
-        
+      if(this.iswatchlist()) {
         this.inwatchlist=true;
-      }
-      else{
-        //console.log(this.watchlistdata.getwatchlist())
+      } else {
         this.inwatchlist=false;
       }
     })
   }
   renderdacdata(offset:number=0){
     this.detaildata.renderdailycharts(this.ticker,offset).subscribe(res=>{
-      console.log(offset)
-      console.log(res)
-      console.log(Object.keys(res).length)
-      if(Object.keys(res).length==0)
-      {
+      if(Object.keys(res).length==0) {
         this.renderdacdata(offset-1)
-      }
-      else
-      {
-        //console.log(typeof(res))
-        //console.log(Object.values(res))
+      } else {
         this.dailydata=Object.values(res)
         this.chartOptions.series[0].data=Object.values(res)
         this.chartOptions.title.text=this.ticker;
         this.chartOptions.series[0].name=this.ticker;
         this.updatechart=true;
         this.chartOptions.series[0].color=(this.detailclose.change>0)?"green":"red";
-        //console.log(this.dailydata)
       }
     })
   }

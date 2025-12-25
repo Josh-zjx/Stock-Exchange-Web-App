@@ -19,71 +19,46 @@ export class PortfoliodataService {
   constructor(private localOP:LocaldataService,private remoteOP:RemotedataService) {
   }
   buy(name:string, amount:number,price:number):void{
-    //console.log(`buying ${name} in ${amount} for ${price} each`)
-    var data = this.getportfolio()
-    var index=-1;
-    for(var i=0;i!=data.length;i++)
-    {
-      if(data[i].ticker==name)
-      {
-        index = i;
-        break;
-      }
-    }
-    if(index==-1)
-    {
-      var newrecord:record={ticker:name,share:amount,cost:price*amount};
+    const data = this.getportfolio()
+    const index = data.findIndex(item => item.ticker === name);
+    
+    if(index === -1) {
+      const newrecord:record={ticker:name,share:amount,cost:price*amount};
       data.push(newrecord)
-    }
-    else
-    {
-      data[i].share +=amount;
-      data[i].cost +=amount*price;
+    } else {
+      data[index].share +=amount;
+      data[index].cost +=amount*price;
     }
     
     this.localOP.setlocal("portfolio",JSON.stringify(data));
     this.comb()
-    //this.getportfolio()
   }
   sell(name:string,amount:number,price:number):void{
-    var data = this.getportfolio()
-    var index=-1;
-    for(var i=0;i!=data.length;i++)
-    {
-      if(data[i].ticker==name)
-      {
-        index = i;
-        break;
+    const data = this.getportfolio()
+    const index = data.findIndex(item => item.ticker === name);
+    
+    if(index !== -1) {
+      data[index].share-=amount;
+      data[index].cost-=price*amount;
+      if(data[index].share==0) {
+        data.splice(index,1)
       }
     }
-    data[i].share-=amount;
-    data[i].cost-=price*amount;
-    if(data[i].share==0)
-    {
-      data.splice(i,1)
-    }
-    //console.log(this.portfoliodata)
     this.localOP.setlocal("portfolio",JSON.stringify(data))
-    //this.getportfolio()
   }
   comb(){
-    var data = this.getportfolio()
+    const data = this.getportfolio()
     data.sort((a,b)=>{
       return a.ticker <b.ticker?-1:1;
     })
-    console.log(data)
     this.localOP.setlocal("portfolio",JSON.stringify(data))
   }
   getportfolio():record[]{
-    var rawstring:string= this.localOP.getlocal("portfolio");
-    if(rawstring==null)
-    {
+    let rawstring:string= this.localOP.getlocal("portfolio");
+    if(rawstring==null) {
       this.localOP.initializelocal("portfolio");
       rawstring = this.localOP.getlocal("portfolio");
-      
     }
-    console.log(rawstring)
-
     return JSON.parse(rawstring);
   }
   renderportfolio():Observable<object[]>{
