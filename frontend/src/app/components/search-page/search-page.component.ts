@@ -38,16 +38,16 @@ export class SearchPageComponent implements OnInit {
     if(ticker!="")
     {
       this.remoteOP.getremote(ticker,"ac").subscribe(res=>{
-        if(Object.keys(res).length==0)
+        if(!res || (Array.isArray(res) && res.length === 0))
         {
           this.isloading=false;
           this.options=[]
         }
         else
         {
-          this.options = Object.keys(res).map(key => ({
-            name: res[key]["name"],
-            ticker: res[key]["ticker"]
+          this.options = (Array.isArray(res) ? res : []).map(item => ({
+            name: item["name"],
+            ticker: item["ticker"]
           }));
         }
         this.isloading=false;
