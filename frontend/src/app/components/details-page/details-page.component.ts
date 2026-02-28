@@ -135,6 +135,10 @@ export class DetailsPageComponent implements OnInit {
     })
   }
   renderdacdata(offset:number=0){
+    const MAX_LOOKBACK = 5;
+    if(offset < -MAX_LOOKBACK) {
+      return;
+    }
     this.detaildata.renderdailycharts(this.ticker,offset).subscribe(res=>{
       if(Object.keys(res).length==0) {
         this.renderdacdata(offset-1)

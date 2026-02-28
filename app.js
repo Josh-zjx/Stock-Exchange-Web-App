@@ -12,7 +12,7 @@ const port = 8080;
 
 // Helper function to make HTTPS requests and reduce code duplication
 function makeHttpsRequest(options, res, onSuccess) {
-    https.get(options, (response) => {
+    const request = https.get(options, (response) => {
         let body = '';
         response.on('data', (data) => {
             body += data;
@@ -20,6 +20,12 @@ function makeHttpsRequest(options, res, onSuccess) {
         response.on('end', () => {
             onSuccess(body);
         });
+        response.on('error', () => {
+            res.status(502).send("error");
+        });
+    });
+    request.on('error', () => {
+        res.status(502).send("error");
     });
 }
 
@@ -34,7 +40,7 @@ function formatDate(date) {
 
 app.get('/query',(req,res)=>{
     const type = req.query.type;
-    const ticker = req.query.name;
+    const ticker = encodeURIComponent(req.query.name);
     const options = {host:"api.tiingo.com"};
     
     if(type=="daily"){
@@ -64,7 +70,13 @@ app.get('/query',(req,res)=>{
             if(body=='{"detail":"Not found."}') {
                 res.send("error");
             } else {
-                const rawdata = JSON.parse(body);
+                let rawdata;
+                try {
+                    rawdata = JSON.parse(body);
+                } catch (e) {
+                    res.status(500).send("error");
+                    return;
+                }
                 if(rawdata.length==0) {
                     res.send(JSON.stringify([]));
                 } else {
@@ -85,7 +97,13 @@ app.get('/query',(req,res)=>{
             if(body=='{"detail":"Not found."}') {
                 res.send("error");
             } else {
-                const rawdata = JSON.parse(body);
+                let rawdata;
+                try {
+                    rawdata = JSON.parse(body);
+                } catch (e) {
+                    res.status(500).send("error");
+                    return;
+                }
                 const newdata = rawdata.map(item => 
                     [Date.parse(item.date), item.open, item.high, item.low, item.close, item.volume]
                 );
@@ -97,7 +115,13 @@ app.get('/query',(req,res)=>{
         options.host="newsapi.org";
         options.path=`/v2/everything?apiKey=${news_token}&q=${ticker}`;
         makeHttpsRequest(options, res, (body) => {
-            const parsedBody = JSON.parse(body);
+            let parsedBody;
+            try {
+                parsedBody = JSON.parse(body);
+            } catch (e) {
+                res.status(500).send("error");
+                return;
+            }
             if(parsedBody.status === "error") {
                 res.send("error");
             } else {
