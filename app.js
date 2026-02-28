@@ -12,20 +12,36 @@ const port = 8080;
 
 // Helper function to make HTTPS requests and reduce code duplication
 function makeHttpsRequest(options, res, onSuccess) {
+    let settled = false;
     const request = https.get(options, (response) => {
         let body = '';
         response.on('data', (data) => {
             body += data;
         });
         response.on('end', () => {
+            if (settled || res.headersSent) return;
+            settled = true;
             onSuccess(body);
         });
         response.on('error', () => {
-            res.status(502).send("error");
+            if (settled || res.headersSent) return;
+            settled = true;
+            res.status(502).json({ error: "Upstream error" });
+            response.destroy();
+            request.destroy();
         });
     });
+    request.setTimeout(10000, () => {
+        if (settled || res.headersSent) return;
+        settled = true;
+        res.status(504).json({ error: "Upstream timeout" });
+        request.destroy();
+    });
     request.on('error', () => {
-        res.status(502).send("error");
+        if (settled || res.headersSent) return;
+        settled = true;
+        res.status(502).json({ error: "Upstream connection error" });
+        request.destroy();
     });
 }
 
@@ -44,7 +60,7 @@ app.get('/query',(req,res)=>{
 
     // Validate required query parameters
     if (typeof type !== 'string' || typeof name !== 'string' || !type || !name) {
-        res.status(400).send("Bad Request");
+        res.status(400).json({ error: "Bad Request" });
         return;
     }
 
@@ -69,6 +85,10 @@ app.get('/query',(req,res)=>{
     }
     else if(type=="dac"){
         const offset = Number(req.query.offset);
+        if (!Number.isFinite(offset)) {
+            res.status(400).json({ error: "Bad Request" });
+            return;
+        }
         const date = new Date();
         date.setDate(date.getDate()+offset);
         const start_date = formatDate(date);
@@ -82,7 +102,7 @@ app.get('/query',(req,res)=>{
                 try {
                     rawdata = JSON.parse(body);
                 } catch (e) {
-                    res.status(500).send("error");
+                    res.status(500).json({ error: "Parse error" });
                     return;
                 }
                 if(rawdata.length==0) {
@@ -109,7 +129,7 @@ app.get('/query',(req,res)=>{
                 try {
                     rawdata = JSON.parse(body);
                 } catch (e) {
-                    res.status(500).send("error");
+                    res.status(500).json({ error: "Parse error" });
                     return;
                 }
                 const newdata = rawdata.map(item => 
@@ -127,7 +147,7 @@ app.get('/query',(req,res)=>{
             try {
                 parsedBody = JSON.parse(body);
             } catch (e) {
-                res.status(500).send("error");
+                res.status(500).json({ error: "Parse error" });
                 return;
             }
             if(parsedBody.status === "error") {
@@ -154,7 +174,7 @@ app.get('/query',(req,res)=>{
         });
     }
     else{
-        res.send("Unrecognized Token");
+        res.status(400).json({ error: "Unrecognized Token" });
     }
 })
 app.get('/',(req,res)=>{
