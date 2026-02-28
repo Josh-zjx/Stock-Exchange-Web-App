@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {detaildesc,detailclose,detailopen} from '../../models/remotedata';
 import {DetaildataService} from '../../services/detaildata.service';
 import {WatchlistdataService} from '../../services/watchlistdata.service';
@@ -15,7 +15,7 @@ import { Router } from '@angular/router'
   templateUrl: './details-page.component.html',
   styleUrls: ['./details-page.component.css']
 })
-export class DetailsPageComponent implements OnInit {
+export class DetailsPageComponent implements OnInit, OnDestroy {
   ticker:string="NVDA";
   updatechart:boolean=false;
   isvalid:boolean=true;
@@ -31,6 +31,7 @@ export class DetailsPageComponent implements OnInit {
   dailydata:number[][]=[];
   now:Date;
   closedtime:Date;
+  private refreshInterval: any;
   detaildesc:detaildesc={ticker:"",name:"",exchangecode:"",description:"",startdate:""};
   detailclose:detailclose={last:0,change:0,changepercent:0,lasttimestamp:"",open:0,high:0,low:0,prevclose:0,volume:0};
   detailopen:detailopen={mid:0,askprice:0,asksize:0,bidprice:0,bidsize:0};
@@ -38,22 +39,19 @@ export class DetailsPageComponent implements OnInit {
   constructor(private router:Router,private modalService:NgbModal,private detaildata:DetaildataService,private portfoliodata:PortfoliodataService,private watchlistdata:WatchlistdataService) { }
 
   ngOnInit(): void {
-    //console.log(this.detaildata.renderdailycharts("AAPL"))
-    //this.dailydata=this.detaildata.renderdailycharts("AAPL")
     this.isloading=true;
-    console.log(this.router.url.slice(9))
     this.ticker=this.router.url.slice(9)
     this.getdetail()
-    setInterval(()=>{
-      if(this.marketopen)
-      {
+    this.refreshInterval = setInterval(()=>{
+      if(this.marketopen) {
         this.getdetail()
       }
-
     },15000)
-    
-    //console.log(this.dailydata)
-    
+  }
+  ngOnDestroy(): void {
+    if(this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
   }
   iswatchlist():boolean{
     return this.watchlistdata.inwatchlist(this.ticker)
@@ -98,15 +96,9 @@ export class DetailsPageComponent implements OnInit {
   }
   getdetail(){
     this.detaildata.rendersummary(this.ticker).subscribe(res=>{
-      //console.log("daily info")
-      //if(res=="err")
-      console.log(res)
-      console.log("analyze res")
-      if(Object.keys(res[1]).length==0)
-      {
+      if(Object.keys(res[1]).length==0) {
         this.isvalid=false;
         this.isloading=false;
-        console.log("wrong")
         return
       }
       
@@ -133,49 +125,40 @@ export class DetailsPageComponent implements OnInit {
       this.isvalid=true;
       this.updatemodal()
       this.isloading=false;
-      var date= new Date();
       this.renderdacdata(0);
-      if((Date.now()-Date.parse(this.detailclose.lasttimestamp))>60000)
-      {
-        //console.log((Date.now()-Date.parse(this.detailclose.lasttimestamp)))
+      if((Date.now()-Date.parse(this.detailclose.lasttimestamp))>60000) {
         this.closedtime = new Date(this.detailclose.lasttimestamp)
         this.marketopen = false;
-      }
-      else
-      {
+      } else {
         this.marketopen = true;
       }
-      if(this.iswatchlist())
-      {
-        
+      if(this.iswatchlist()) {
         this.inwatchlist=true;
-      }
-      else{
-        //console.log(this.watchlistdata.getwatchlist())
+      } else {
         this.inwatchlist=false;
       }
     })
   }
   renderdacdata(offset:number=0){
-    this.detaildata.renderdailycharts(this.ticker,offset).subscribe(res=>{
-      console.log(offset)
-      console.log(res)
-      console.log(Object.keys(res).length)
-      if(Object.keys(res).length==0)
-      {
-        this.renderdacdata(offset-1)
+    const MAX_LOOKBACK = 5;
+    if(offset < -MAX_LOOKBACK) {
+      this.dailydata = [];
+      if (this.chartOptions && this.chartOptions.series && this.chartOptions.series.length > 0) {
+        this.chartOptions.series[0].data = [];
       }
-      else
-      {
-        //console.log(typeof(res))
-        //console.log(Object.values(res))
+      this.updatechart = true;
+      return;
+    }
+    this.detaildata.renderdailycharts(this.ticker,offset).subscribe(res=>{
+      if(Object.keys(res).length==0) {
+        this.renderdacdata(offset-1)
+      } else {
         this.dailydata=Object.values(res)
         this.chartOptions.series[0].data=Object.values(res)
         this.chartOptions.title.text=this.ticker;
         this.chartOptions.series[0].name=this.ticker;
         this.updatechart=true;
         this.chartOptions.series[0].color=(this.detailclose.change>0)?"green":"red";
-        //console.log(this.dailydata)
       }
     })
   }

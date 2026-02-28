@@ -10,203 +10,183 @@ app.use(express.static(process.cwd()+"/frontend/dist/frontend/"));
 app.use(cors());
 const port = 8080;
 
+// Helper function to make HTTPS requests and reduce code duplication
+function makeHttpsRequest(options, res, onSuccess) {
+    let settled = false;
+    const request = https.get(options, (response) => {
+        let body = '';
+        response.on('data', (data) => {
+            body += data;
+        });
+        response.on('end', () => {
+            if (settled || res.headersSent) return;
+            settled = true;
+            onSuccess(body);
+        });
+        response.on('error', () => {
+            if (settled || res.headersSent) return;
+            settled = true;
+            res.status(502).json({ error: "Upstream error" });
+            response.destroy();
+            request.destroy();
+        });
+    });
+    request.setTimeout(10000, () => {
+        if (settled || res.headersSent) return;
+        settled = true;
+        res.status(504).json({ error: "Upstream timeout" });
+        request.destroy();
+    });
+    request.on('error', () => {
+        if (settled || res.headersSent) return;
+        settled = true;
+        res.status(502).json({ error: "Upstream connection error" });
+        request.destroy();
+    });
+}
+
+// Helper function to format date as YYYY-MM-DD
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 
 app.get('/query',(req,res)=>{
-    var type = req.query.type;
-    var ticker = req.query.name;
-    console.log(`Received query on ${ticker}`);
-    var options = {host:"api.tiingo.com"}
+    const type = req.query.type;
+    const name = req.query.name;
+
+    // Validate required query parameters
+    if (typeof type !== 'string' || typeof name !== 'string' || !type || !name) {
+        res.status(400).json({ error: "Bad Request" });
+        return;
+    }
+
+    const ticker = encodeURIComponent(name);
+    const options = {host:"api.tiingo.com"};
+    
     if(type=="daily"){
-            options.path = `/tiingo/daily/${ticker}?token=${stock_token}`;
-            
-            https.get(options,(response)=>{
-                var body = '';
-                response.on('data', function(data) {
-                    body += data;
-                });
-                response.on('end',()=>{
-                    console.log(body);
-                    res.send(body);
-                });
-            });
+        options.path = `/tiingo/daily/${ticker}?token=${stock_token}`;
+        makeHttpsRequest(options, res, (body) => {
+            res.send(body);
+        });
     }
     else if(type=="iex"){
         options.path = `/iex/${ticker}?token=${stock_token}`;
-        https.get(options,(response)=>{
-            var body = '';
-            response.on('data', function(data) {
-                body += data;
-            });
-            response.on('end',()=>{
-                if(body=='{"detail":"Not found."}')
-                {
-                    res.send("error")
-                }
-                else
-                {
-                    console.log(body);
+        makeHttpsRequest(options, res, (body) => {
+            if(body=='{"detail":"Not found."}') {
+                res.send("error");
+            } else {
                 res.send(body);
-                }
-                
-            }); 
+            }
         });
     }
     else if(type=="dac"){
-        var offset = Number(req.query.offset);
-        console.log(offset)
-        var date = new Date();
-        console.log(date)
+        const offset = Number(req.query.offset);
+        if (!Number.isFinite(offset)) {
+            res.status(400).json({ error: "Bad Request" });
+            return;
+        }
+        const date = new Date();
         date.setDate(date.getDate()+offset);
-        var start_date = "";
-        start_date +=(date.getFullYear()).toString();
-        start_date +="-";
-        start_date +=(date.getMonth()+1).toString();
-        start_date +="-";
-        start_date +=date.getDate().toString();
-        console.log(start_date)
+        const start_date = formatDate(date);
+        
         options.path = `/iex/${ticker}/prices?startDate=${start_date}&resampleFreq=4min&token=${stock_token}`;
-        https.get(options,(response)=>{
-            var body = '';
-            response.on('data', function(data) {
-                body += data;
-            });
-            response.on('end',()=>{
-                if(body=='{"detail":"Not found."}')
-                {   
-                    console.log("wrong ticker")
-                    res.send("error")}
-                else
-                {
-                    console.log(body)
-                    rawdata=JSON.parse(body);
-                    console.log(rawdata.length)
-                newdata=[]
-                if(rawdata.length==0)
-                {
-                    console.log("No daily data")
-                    res.send(JSON.stringify([]))
+        makeHttpsRequest(options, res, (body) => {
+            if(body=='{"detail":"Not found."}') {
+                res.send("error");
+            } else {
+                let rawdata;
+                try {
+                    rawdata = JSON.parse(body);
+                } catch (e) {
+                    res.status(500).json({ error: "Parse error" });
+                    return;
                 }
-                else
-                {
-                    
-                for(var i=0;i!=rawdata.length;i++)
-                {
-                    //console.log(JSON.parse(rawdata[i]))
-                    newdata.push([Date.parse(rawdata[i]["date"])-3600000*8,rawdata[i]["close"]])
+                if(rawdata.length==0) {
+                    res.send(JSON.stringify([]));
+                } else {
+                    const newdata = rawdata.map(item => 
+                        [Date.parse(item.date) - 3600000*8, item.close]
+                    );
+                    res.send(JSON.stringify(newdata));
                 }
-                console.log(body);
-                res.send(JSON.stringify(newdata));
-                }
-                console.log(body)
-                }
-                //console.log(body)
-                
-                //console.log(typeof(rawdata[0]["date"]))
-                
-            });
+            }
         });
     }
     else if(type=="hist"){
-        var date = new Date();
-        var start_date = "";
-        start_date +=(date.getFullYear()-2).toString();
-        start_date +="-";
-        start_date +=(date.getMonth()+1).toString();
-        start_date +="-";
-        start_date +=date.getDate().toString();
+        const date = new Date();
+        const start_date = formatDate(new Date(date.getFullYear()-2, date.getMonth(), date.getDate()));
 
         options.path = `/tiingo/daily/${ticker}/prices?startDate=${start_date}&resampleFreq=daily&token=${stock_token}`;
-        https.get(options,(response)=>{
-            var body = '';
-            response.on('data', function(data) {
-                body += data;
-            });
-            response.on('end',()=>{
-                if(body=='{"detail":"Not found."}')
-                {
-                    res.send("error")
+        makeHttpsRequest(options, res, (body) => {
+            if(body=='{"detail":"Not found."}') {
+                res.send("error");
+            } else {
+                let rawdata;
+                try {
+                    rawdata = JSON.parse(body);
+                } catch (e) {
+                    res.status(500).json({ error: "Parse error" });
+                    return;
                 }
-                else
-                {
-                    rawdata=JSON.parse(body);
-                newdata=[]
-                console.log(typeof(rawdata[0]["date"]))
-                //res.send(body)
-                for(var i=0;i!=rawdata.length;i++)
-                {
-                    //console.log(JSON.parse(rawdata[i]))
-                    newdata.push([Date.parse(rawdata[i]["date"]),rawdata[i]["open"],rawdata[i]["high"],rawdata[i]["low"],rawdata[i]["close"],rawdata[i]["volume"]])
-                }
-                console.log(body);
+                const newdata = rawdata.map(item => 
+                    [Date.parse(item.date), item.open, item.high, item.low, item.close, item.volume]
+                );
                 res.send(JSON.stringify(newdata));
-                //res.send(body);
-                }
-                
-            });
+            }
         });
     }
     else if(type=="news"){
         options.host="newsapi.org";
         options.path=`/v2/everything?apiKey=${news_token}&q=${ticker}`;
-        https.get(options,(response)=>{
-            var body = '';
-            response.on('data', function(data) {
-                body += data;
-            });
-            response.on('end',()=>{
-               
-                    status = JSON.parse(body)["status"]
-                    if(status=="error")
-                    {
-                        res.send("error")
-                    }else{
-                    //console.log(body);
-                rawnews = JSON.parse(body)["articles"];
-                newnews = []
-                for(var i=0;i!=rawnews.length;i++)
-                {
-                    newnews.push({"url":rawnews[i]["url"],"title":rawnews[i]["title"],"description":rawnews[i]["description"],"source":rawnews[i]["source"]["name"],"urlToImage":rawnews[i]["urlToImage"],"publishedAt":rawnews[i]["publishedAt"]})
-                }
+        makeHttpsRequest(options, res, (body) => {
+            let parsedBody;
+            try {
+                parsedBody = JSON.parse(body);
+            } catch (e) {
+                res.status(500).json({ error: "Parse error" });
+                return;
+            }
+            if(parsedBody.status === "error") {
+                res.send("error");
+            } else {
+                const rawnews = Array.isArray(parsedBody.articles) ? parsedBody.articles : [];
+                const newnews = rawnews.map(article => ({
+                    url: article.url,
+                    title: article.title,
+                    description: article.description,
+                    source: article.source.name,
+                    urlToImage: article.urlToImage,
+                    publishedAt: article.publishedAt
+                }));
                 res.send(JSON.stringify(newnews));
-                console.log(rawnews.length)
-                }
-                
-            }); 
+            }
         });
     }
     else if(type=="ac")
     {
         options.path = `/tiingo/utilities/search?query=${ticker}&token=${stock_token}`;
-            
-        https.get(options,(response)=>{
-            var body = '';
-            response.on('data', function(data) {
-                body += data;
-            });
-            response.on('end',()=>{
-                console.log(body);
-                res.send(body);
-            });
+        makeHttpsRequest(options, res, (body) => {
+            res.send(body);
         });
     }
     else{
-        res.send("Unrecognized Token");
-        return 0;
+        res.status(400).json({ error: "Unrecognized Token" });
     }
 })
 app.get('/',(req,res)=>{
     fs.readFile("./frontend/dist/frontend/index.html",(err,data)=>{
-        if(err)
-        {
-            console.log("Search File read error");
-            res.send("Cannot fetch the page");
-        }else{
+        if(err) {
+            res.status(500).send("Cannot fetch the page");
+        } else {
             res.send(data.toString());
         }
     })
-
 })
+
 app.listen(port,()=>{
     console.log(` Server started. Listening at port ${port}`)
-
 })
