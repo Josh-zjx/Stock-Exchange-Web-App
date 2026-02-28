@@ -40,7 +40,15 @@ function formatDate(date) {
 
 app.get('/query',(req,res)=>{
     const type = req.query.type;
-    const ticker = encodeURIComponent(req.query.name);
+    const name = req.query.name;
+
+    // Validate required query parameters
+    if (typeof type !== 'string' || typeof name !== 'string' || !type || !name) {
+        res.status(400).send("Bad Request");
+        return;
+    }
+
+    const ticker = encodeURIComponent(name);
     const options = {host:"api.tiingo.com"};
     
     if(type=="daily"){
@@ -125,7 +133,7 @@ app.get('/query',(req,res)=>{
             if(parsedBody.status === "error") {
                 res.send("error");
             } else {
-                const rawnews = parsedBody.articles;
+                const rawnews = Array.isArray(parsedBody.articles) ? parsedBody.articles : [];
                 const newnews = rawnews.map(article => ({
                     url: article.url,
                     title: article.title,
