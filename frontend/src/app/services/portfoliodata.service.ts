@@ -59,7 +59,12 @@ export class PortfoliodataService {
       this.localOP.initializelocal("portfolio");
       rawstring = this.localOP.getlocal("portfolio");
     }
-    return JSON.parse(rawstring);
+    try {
+      return JSON.parse(rawstring);
+    } catch (e) {
+      this.localOP.initializelocal("portfolio");
+      return [];
+    }
   }
   renderportfolio():Observable<object[]>{
     console.log("rendering portfolio")

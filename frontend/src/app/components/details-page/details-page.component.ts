@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {detaildesc,detailclose,detailopen} from '../../models/remotedata';
 import {DetaildataService} from '../../services/detaildata.service';
 import {WatchlistdataService} from '../../services/watchlistdata.service';
@@ -15,7 +15,7 @@ import { Router } from '@angular/router'
   templateUrl: './details-page.component.html',
   styleUrls: ['./details-page.component.css']
 })
-export class DetailsPageComponent implements OnInit {
+export class DetailsPageComponent implements OnInit, OnDestroy {
   ticker:string="NVDA";
   updatechart:boolean=false;
   isvalid:boolean=true;
@@ -31,6 +31,7 @@ export class DetailsPageComponent implements OnInit {
   dailydata:number[][]=[];
   now:Date;
   closedtime:Date;
+  private refreshInterval: any;
   detaildesc:detaildesc={ticker:"",name:"",exchangecode:"",description:"",startdate:""};
   detailclose:detailclose={last:0,change:0,changepercent:0,lasttimestamp:"",open:0,high:0,low:0,prevclose:0,volume:0};
   detailopen:detailopen={mid:0,askprice:0,asksize:0,bidprice:0,bidsize:0};
@@ -41,11 +42,16 @@ export class DetailsPageComponent implements OnInit {
     this.isloading=true;
     this.ticker=this.router.url.slice(9)
     this.getdetail()
-    setInterval(()=>{
+    this.refreshInterval = setInterval(()=>{
       if(this.marketopen) {
         this.getdetail()
       }
     },15000)
+  }
+  ngOnDestroy(): void {
+    if(this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
   }
   iswatchlist():boolean{
     return this.watchlistdata.inwatchlist(this.ticker)
@@ -136,6 +142,11 @@ export class DetailsPageComponent implements OnInit {
   renderdacdata(offset:number=0){
     const MAX_LOOKBACK = 5;
     if(offset < -MAX_LOOKBACK) {
+      this.dailydata = [];
+      if (this.chartOptions && this.chartOptions.series && this.chartOptions.series.length > 0) {
+        this.chartOptions.series[0].data = [];
+      }
+      this.updatechart = true;
       return;
     }
     this.detaildata.renderdailycharts(this.ticker,offset).subscribe(res=>{
