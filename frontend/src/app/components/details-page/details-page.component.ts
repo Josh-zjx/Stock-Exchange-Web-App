@@ -119,7 +119,6 @@ export class DetailsPageComponent implements OnInit {
       this.isvalid=true;
       this.updatemodal()
       this.isloading=false;
-      const date= new Date();
       this.renderdacdata(0);
       if((Date.now()-Date.parse(this.detailclose.lasttimestamp))>60000) {
         this.closedtime = new Date(this.detailclose.lasttimestamp)

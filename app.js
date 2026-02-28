@@ -160,7 +160,7 @@ app.get('/query',(req,res)=>{
 app.get('/',(req,res)=>{
     fs.readFile("./frontend/dist/frontend/index.html",(err,data)=>{
         if(err) {
-            res.send("Cannot fetch the page");
+            res.status(500).send("Cannot fetch the page");
         } else {
             res.send(data.toString());
         }
