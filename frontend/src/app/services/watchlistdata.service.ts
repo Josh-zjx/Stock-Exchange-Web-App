@@ -1,95 +1,36 @@
 import { Injectable } from '@angular/core';
-import { Observable, of,forkJoin} from 'rxjs';
-import { LocaldataService } from './localdata.service'
-import { RemotedataService } from './remotedata.service'
-//import { localwatchlist } from '../models/localdata';
-import { watchlistitem,localwatchlist } from '../models/watchlistdata';
-import { WatchListItemComponent } from '../components/watch-list-item/watch-list-item.component';
+import { LocalStore } from './local-store';
 
+interface WatchlistEntry {
+  ticker: string;
+}
+
+/** Watched tickers, kept upper-case and sorted. */
 @Injectable({
   providedIn: 'root'
 })
 export class WatchlistdataService {
-  constructor(private localOP:LocaldataService,private remoteOP:RemotedataService) {
-    //localOP.initializelocal("watchlist");
-    //this.addwatchlist("AAPL");
-    //this.addwatchlist("IBM");
-    //this.addwatchlist("NVDA");
+  private readonly store = new LocalStore<WatchlistEntry>('watchlist');
+
+  tickers(): string[] {
+    return this.store.load().map(entry => entry.ticker.toUpperCase());
   }
 
-  addwatchlist(ticker:string):void{
-    var original = this.getwatchlist();
-    //console.log(original)
-    original.push({ticker:ticker});
-    this.localOP.setlocal("watchlist",JSON.stringify(original))
-    this.comb()
-  };
-  deletewatchlist(ticker:string):void{
-    const original = this.getwatchlist();
-    const index = original.findIndex(item => item.ticker === ticker);
-    if(index !== -1) {
-      original.splice(index, 1);
-    }
-    this.localOP.setlocal("watchlist",JSON.stringify(original));
-  };
-  inwatchlist(ticker:string):boolean{
-    const original = this.getwatchlist();
-    return original.some(item => item.ticker === ticker);
-  };
-  comb(){
-    const data=this.getwatchlist()
-    data.sort((a,b)=>{
-      return a.ticker <b.ticker?-1:1;
-    })
-    this.localOP.setlocal("watchlist",JSON.stringify(data))
+  has(ticker: string): boolean {
+    return this.tickers().includes(ticker.toUpperCase());
   }
-  getwatchlist():localwatchlist[]{
-    var rawstring = this.localOP.getlocal("watchlist");
-    if(rawstring==null)
-    {
-      this.localOP.initializelocal("watchlist");
-      rawstring = this.localOP.getlocal("watchlist");
+
+  add(ticker: string): void {
+    if (!this.has(ticker)) {
+      this.save([...this.tickers(), ticker.toUpperCase()]);
     }
-    return JSON.parse(rawstring);
-    //return [{ticker:"AAPL"},{ticker:"MSFN"},{ticker:"IBM"}]
-  };
-  renderwatchlist():Observable<object[]>{
-    var list:Observable<object>[] = []; 
-    var namelist = this.getwatchlist();
-    //console.log(namelist);
-    
-    for(var i=0;i!=namelist.length;i++)
-    {
-      //watchlist[namelist[i].ticker]={ticker:namelist[i].ticker,name:"",change:0,currentprice:0,changepercent:0};
-      list.push(this.remoteOP.getremote(namelist[i].ticker,"daily"));
-      list.push(this.remoteOP.getremote(namelist[i].ticker,"iex"));
-    }
-    //console.log(watchlist)
-    var allob:Observable<object[]>=forkJoin(list);
-    /*allob.subscribe(res=>{
-      var parsedstring;
-      for(var i=0;i!=res.length;i++)
-      {
-        parsedstring = res[i];
-        if(parsedstring.hasOwnProperty("name"))
-        {
-          watchlist[parsedstring["ticker"]].name=parsedstring["name"];
-        }
-        else
-        {
-          //console.log(parsedstring[0]["ticker"])
-          watchlist[parsedstring[0]["ticker"]].currentprice=parsedstring[0]["last"];
-          watchlist[parsedstring[0]["ticker"]].change=parsedstring[0]["last"]-parsedstring[0]["prevClose"];
-          watchlist[parsedstring[0]["ticker"]].changepercent=(parsedstring[0]["last"]-parsedstring[0]["prevClose"])/parsedstring[0]["prevClose"];
-        }        
-      }
-      for(var i=0;i!=namelist.length;i++)
-      {
-        watchlistitems.push(watchlist[namelist[i].ticker]);
-      }
-      return watchlistitems;
-    })*/
-    return allob;
-  };
-  
+  }
+
+  remove(ticker: string): void {
+    this.save(this.tickers().filter(watched => watched !== ticker.toUpperCase()));
+  }
+
+  private save(tickers: string[]): void {
+    this.store.save(tickers.sort().map(ticker => ({ ticker })));
+  }
 }

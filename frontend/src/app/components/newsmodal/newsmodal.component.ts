@@ -1,17 +1,14 @@
-import { Component, OnInit,Input } from '@angular/core';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { detailnewsitem } from '../../models/remotedata';
+import { Component, Input } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NewsItem } from '../news-item/news-item.component';
 
 @Component({
   selector: 'app-newsmodal',
   templateUrl: './newsmodal.component.html',
   styleUrls: ['./newsmodal.component.css']
 })
-export class NewsmodalComponent implements OnInit {
-  @Input() news:detailnewsitem;
-  constructor(public activeModal:NgbActiveModal) { }
-    
-  ngOnInit(): void {
-  }
+export class NewsmodalComponent {
+  @Input() news: NewsItem;
 
+  constructor(public activeModal: NgbActiveModal) { }
 }

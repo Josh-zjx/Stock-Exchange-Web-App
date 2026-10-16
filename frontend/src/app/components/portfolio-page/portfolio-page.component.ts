@@ -1,93 +1,59 @@
 import { Component, OnInit } from '@angular/core';
-import {portfolioitem} from '../../models/portfoliodata';
-import {PortfoliodataService} from '../../services/portfoliodata.service';
-import {order} from '../../models/portfoliodata'
+import { Order } from '../../models/order';
+import { PortfoliodataService } from '../../services/portfoliodata.service';
+import { StockApiService } from '../../services/stock-api.service';
+import { PortfolioItem } from '../portfolio-page-item/portfolio-page-item.component';
+
 @Component({
   selector: 'app-portfolio-page',
   templateUrl: './portfolio-page.component.html',
   styleUrls: ['./portfolio-page.component.css']
 })
 export class PortfolioPageComponent implements OnInit {
-   Portfolio:portfolioitem[]=[
-    {
-      ticker:"AA",
-      name: "Aaa",
-      Quantity:10,
-      averagecost:20,
-      totalcost:200,
-      change:10,
-      currentprice:10,
-      marketvalue:100
-    }
-    ,
-    {
-      ticker:"BB",
-      name: "Bbb",
-      Quantity:10,
-      averagecost:30,
-      totalcost:300,
-      change:40,
-      currentprice:60,
-      marketvalue:600
-    }
-  ]
-  constructor(private dataservice:PortfoliodataService) { }
-  isloading:boolean=true;
+  Portfolio: PortfolioItem[] = [];
+  isloading = true;
+
+  constructor(private portfolio: PortfoliodataService, private api: StockApiService) { }
+
   ngOnInit(): void {
-    this.isloading=true;
     this.getportfolio();
   }
-  buy(neworder:order){
-    this.dataservice.buy(neworder.name,neworder.amount,neworder.price);
+
+  buy(order: Order): void {
+    this.portfolio.buy(order.name, order.amount, order.price);
     this.getportfolio();
   }
-  sell(neworder:order){
-    this.dataservice.sell(neworder.name,neworder.amount,neworder.price);
+
+  sell(order: Order): void {
+    this.portfolio.sell(order.name, order.amount);
     this.getportfolio();
   }
-  getportfolio(){
-    this.isloading=true;
-    const data=this.dataservice.getportfolio()
-    if(data.length==0) {
-      this.Portfolio=[]
-      this.isloading=false;
-      return
+
+  getportfolio(): void {
+    const holdings = this.portfolio.holdings();
+    if (!holdings.length) {
+      this.Portfolio = [];
+      this.isloading = false;
+      return;
     }
-    this.dataservice.renderportfolio().subscribe(res=>{
-      let parsedstring;
-      const portfolioitems:portfolioitem[]=[];
-      const tmp={};
-      this.Portfolio=[]
-      
-      for(let i=0; i < data.length; i++) {
-        tmp[data[i].ticker]={
-          ticker:data[i].ticker,
-          name:"",
-          Quantity:data[i].share,
-          averagecost:data[i].cost/data[i].share,
-          totalcost:data[i].cost,
-          change:0,
-          currentprice:0,
-          marketvalue:0,
-        }
-      }
-      for(let i=0; i < res.length; i++) {
-        parsedstring = res[i];
-        if(parsedstring.hasOwnProperty("name")) {
-          tmp[parsedstring["ticker"]].name=parsedstring["name"];
-        } else {
-          tmp[parsedstring[0]["ticker"]].currentprice=parsedstring[0]["last"];
-          tmp[parsedstring[0]["ticker"]].change=parsedstring[0]["last"]-tmp[parsedstring[0]["ticker"]].averagecost;
-          tmp[parsedstring[0]["ticker"]].marketvalue=tmp[parsedstring[0]["ticker"]].currentprice*tmp[parsedstring[0]["ticker"]].Quantity;
-        }
-      }
-      for(let i=0; i < data.length; i++) {
-        portfolioitems.push(tmp[data[i].ticker]);
-      }
-      this.Portfolio=portfolioitems;
-      this.isloading=false;
-    })
+    this.isloading = true;
+    this.api.overview(holdings.map(holding => holding.ticker)).subscribe(({ names, quotes }) => {
+      this.Portfolio = holdings.map((holding, i) => {
+        const quote = quotes.get(holding.ticker.toUpperCase());
+        const averagecost = holding.cost / holding.share;
+        const currentprice = quote ? quote.last : 0;
+        return {
+          ticker: holding.ticker,
+          name: names[i],
+          Quantity: holding.share,
+          averagecost,
+          totalcost: holding.cost,
+          currentprice,
+          change: quote ? currentprice - averagecost : 0,
+          marketvalue: currentprice * holding.share
+        };
+      });
+      this.isloading = false;
+    });
   }
-
-
 }
