@@ -21,7 +21,12 @@ function makeHttpsRequest(options, res, onSuccess) {
         response.on('end', () => {
             if (settled || res.headersSent) return;
             settled = true;
-            onSuccess(body);
+            // This runs outside Express, so an exception here would crash the process
+            try {
+                onSuccess(body);
+            } catch (e) {
+                if (!res.headersSent) res.status(502).json({ error: "Unexpected upstream response" });
+            }
         });
         response.on('error', () => {
             if (settled || res.headersSent) return;
@@ -158,7 +163,7 @@ app.get('/query',(req,res)=>{
                     url: article.url,
                     title: article.title,
                     description: article.description,
-                    source: article.source.name,
+                    source: article.source && article.source.name,
                     urlToImage: article.urlToImage,
                     publishedAt: article.publishedAt
                 }));
