@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {watchlistitem} from '../../models/watchlistdata';
-import {WatchlistdataService} from '../../services/watchlistdata.service';
+import { dayChange } from '../../models/stock';
+import { StockApiService } from '../../services/stock-api.service';
+import { WatchlistdataService } from '../../services/watchlistdata.service';
+import { WatchlistItem } from '../watch-list-item/watch-list-item.component';
 
 @Component({
   selector: 'app-watch-list-page',
@@ -8,62 +10,41 @@ import {WatchlistdataService} from '../../services/watchlistdata.service';
   styleUrls: ['./watch-list-page.component.css']
 })
 export class WatchListPageComponent implements OnInit {
+  watchlistitems: WatchlistItem[] = [];
+  isloading = true;
 
-  watchlistitems:watchlistitem[] = [
-    {ticker:"AA",
-    name: "Aaa",
-    change:10,
-    currentprice:10,
-    changepercent:1},
-    {ticker:"BB",
-    name: "Bbb",
-    change:20,
-    currentprice:10,
-    changepercent:2}
-  ]
-  constructor(private dataservice:WatchlistdataService) { 
-    
-  }
-  isloading:boolean=true;
+  constructor(private watchlist: WatchlistdataService, private api: StockApiService) { }
+
   ngOnInit(): void {
-    this.isloading=true;
     this.getWatchList();
   }
-  getWatchList():void{
-    this.isloading=true;
-    const namelist = this.dataservice.getwatchlist();
-    this.watchlistitems=[]
-    const watchlist={};
-    const watchlistitems:watchlistitem[]=[];
-    if(namelist.length==0) {
-      this.isloading=false;
-      return
+
+  getWatchList(): void {
+    const tickers = this.watchlist.tickers();
+    this.watchlistitems = [];
+    if (!tickers.length) {
+      this.isloading = false;
+      return;
     }
-    for(let i=0; i < namelist.length; i++) {
-      watchlist[namelist[i].ticker]={ticker:namelist[i].ticker,name:"",change:0,currentprice:0,changepercent:0};
-    }
-    this.dataservice.renderwatchlist().subscribe(res=>{
-      let parsedstring;
-      for(let i=0; i < res.length; i++) {
-        parsedstring = res[i];
-        if(parsedstring.hasOwnProperty("name")) {
-          watchlist[parsedstring["ticker"]].name=parsedstring["name"];
-        } else {
-          watchlist[parsedstring[0]["ticker"]].currentprice=parsedstring[0]["last"];
-          watchlist[parsedstring[0]["ticker"]].change=parsedstring[0]["last"]-parsedstring[0]["prevClose"];
-          watchlist[parsedstring[0]["ticker"]].changepercent=(parsedstring[0]["last"]-parsedstring[0]["prevClose"])/parsedstring[0]["prevClose"];
-        }        
-      }
-      for(let i=0; i < namelist.length; i++) {
-        watchlistitems.push(watchlist[namelist[i].ticker]);
-      }
-      this.watchlistitems = watchlistitems;
-      this.isloading=false;
+    this.isloading = true;
+    this.api.overview(tickers).subscribe(({ names, quotes }) => {
+      this.watchlistitems = tickers.map((ticker, i) => {
+        const quote = quotes.get(ticker);
+        const change = quote ? dayChange(quote) : 0;
+        return {
+          ticker,
+          name: names[i],
+          currentprice: quote ? quote.last : 0,
+          change,
+          changepercent: quote ? change / quote.prevClose : 0
+        };
+      });
+      this.isloading = false;
     });
   }
-  deleteitem(name:string):void{
-    this.dataservice.deletewatchlist(name);
+
+  deleteitem(ticker: string): void {
+    this.watchlist.remove(ticker);
     this.getWatchList();
   }
-
 }

@@ -1,0 +1,18 @@
+{
+  "name": "stock-exchange-web-app",
+  "private": true,
+  "description": "Express backend and Angular frontend for searching, watching and trading stocks",
+  "main": "app.js",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "node --test test/*.test.js",
+    "build": "npm --prefix frontend run build -- --prod",
+    "bundle": "npm run build && node scripts/bundle.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

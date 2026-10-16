@@ -1,26 +1,27 @@
-import { Component, OnInit,Input } from '@angular/core';
-import { detailnewsitem } from '../../models/remotedata';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Input } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NewsmodalComponent } from '../newsmodal/newsmodal.component';
 
+export interface NewsItem {
+  url: string;
+  title: string;
+  description: string;
+  source: string;
+  image: string;
+  published: string;
+}
 
 @Component({
   selector: 'app-news-item',
   templateUrl: './news-item.component.html',
   styleUrls: ['./news-item.component.css']
 })
-export class NewsItemComponent implements OnInit {
-  @Input() news:detailnewsitem;
-  constructor(private modalService:NgbModal) { }
+export class NewsItemComponent {
+  @Input() news: NewsItem;
 
-  ngOnInit(): void {
-  }
-  opennews(inputnews:detailnewsitem)
-  {
-      console.log("open modal news")
-      const modalRef = this.modalService.open(NewsmodalComponent);
-      modalRef.componentInstance.news = inputnews;
-      
-  }
+  constructor(private modalService: NgbModal) { }
 
+  opennews(news: NewsItem): void {
+    this.modalService.open(NewsmodalComponent).componentInstance.news = news;
+  }
 }

@@ -1,8 +1,9 @@
-import { Component, OnInit,Input } from '@angular/core';
-import { detailnewsitem } from '../../models/remotedata';
-import {  DetaildataService } from '../../services/detaildata.service'
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NewsmodalComponent } from '../newsmodal/newsmodal.component';
+import { Component, Input, OnInit } from '@angular/core';
+import { of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { NewsArticle } from '../../models/stock';
+import { StockApiService } from '../../services/stock-api.service';
+import { NewsItem } from '../news-item/news-item.component';
 
 @Component({
   selector: 'app-detail-news',
@@ -10,45 +11,29 @@ import { NewsmodalComponent } from '../newsmodal/newsmodal.component';
   styleUrls: ['./detail-news.component.css']
 })
 export class DetailNewsComponent implements OnInit {
-  @Input() ticker:string;
-  newslist1:detailnewsitem[]=[];
-  newslist2:detailnewsitem[]=[];
-  constructor(private dataservice:DetaildataService,private modalService:NgbModal) { }
+  @Input() ticker: string;
+  newslist1: NewsItem[] = [];
+  newslist2: NewsItem[] = [];
+
+  constructor(private api: StockApiService) { }
 
   ngOnInit(): void {
-   //console.log("rendering news")
-    this.getnews()
+    this.api.news(this.ticker).pipe(catchError(() => of([]))).subscribe((articles: NewsArticle[]) => {
+      const items = articles.map(toNewsItem);
+      // Deal the articles alternately into the two columns
+      this.newslist1 = items.filter((_, i) => i % 2 === 0);
+      this.newslist2 = items.filter((_, i) => i % 2 === 1);
+    });
   }
-  opennews(inputnews:detailnewsitem)
-  {
-     //console.log("open modal news")
-      const modalRef = this.modalService.open(NewsmodalComponent);
-      modalRef.componentInstance.news = inputnews;
-      
-  }
-  getnews(){
-    this.dataservice.rendernews(this.ticker).subscribe(res=>{
-     //console.log(res)
-      for(var i=0;i!=Object.keys(res).length;i++)
-      {
-        var newnewsitem:detailnewsitem={url:"",title:"",description:"",source:"",published:"",image:""};
-        newnewsitem.description=res[i].description;
-        newnewsitem.title=res[i].title;
-        newnewsitem.url=res[i].url;
-        newnewsitem.image=res[i].urlToImage;
-        newnewsitem.source=res[i].source;
-        newnewsitem.published=res[i].publishedAt;
-        if(i%2==0)
-        {
-          this.newslist1.push(newnewsitem)
-        }
-        else
-        {
-          this.newslist2.push(newnewsitem)
-        }
-        
-      }
-    })
-  }
+}
 
+function toNewsItem(article: NewsArticle): NewsItem {
+  return {
+    url: article.url,
+    title: article.title,
+    description: article.description,
+    source: article.source,
+    image: article.urlToImage,
+    published: article.publishedAt
+  };
 }
