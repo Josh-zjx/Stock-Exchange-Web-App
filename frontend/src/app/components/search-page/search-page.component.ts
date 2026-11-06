@@ -1,62 +1,50 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import {FormControl} from '@angular/forms';
-import {RemotedataService} from '../../services/remotedata.service'
-import { debounceTime, tap, switchMap, finalize } from 'rxjs/operators';
-interface acitem{
-  name:string;
-  ticker:string;
-}
+import { Observable, of, Subject } from 'rxjs';
+import { catchError, debounceTime, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { SearchResult } from '../../models/stock';
+import { StockApiService } from '../../services/stock-api.service';
+
 @Component({
   selector: 'app-search-page',
   templateUrl: './search-page.component.html',
   styleUrls: ['./search-page.component.css']
 })
-export class SearchPageComponent implements OnInit {
-  options:acitem[]
-  ticker:string=""
-  isloading:boolean=false;
-  constructor(private router:Router,private remoteOP:RemotedataService) { }
-  myControl = new FormControl()
+export class SearchPageComponent implements OnInit, OnDestroy {
+  options: SearchResult[] = [];
+  ticker = '';
+  isloading = false;
+  myControl = new FormControl();
+  private readonly destroy$ = new Subject<void>();
+
+  constructor(private router: Router, private api: StockApiService) { }
+
   ngOnInit(): void {
-    this.myControl.valueChanges.pipe(debounceTime(300)).subscribe(
-      ()=>{
-        this.isloading=true;
-        this.getnewac(this.ticker)
-      }
-    )
+    // switchMap drops replies to stale queries, so suggestions always match the latest input
+    this.myControl.valueChanges.pipe(
+      debounceTime(300),
+      tap(() => { this.isloading = true; }),
+      switchMap((query: string) => this.suggest(query)),
+      takeUntil(this.destroy$)
+    ).subscribe(options => {
+      this.options = options;
+      this.isloading = false;
+    });
   }
-  navi(){
-    if(this.ticker!="")
-    {
-      this.router.navigateByUrl(`/details/${this.ticker}`);
-    }
-    
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
-  getnewac(ticker:string)
-  {
-    if(ticker!="")
-    {
-      this.remoteOP.getremote(ticker,"ac").subscribe(res=>{
-        if(!res || (Array.isArray(res) && res.length === 0))
-        {
-          this.isloading=false;
-          this.options=[]
-        }
-        else
-        {
-          this.options = (Array.isArray(res) ? res : []).map(item => ({
-            name: item["name"],
-            ticker: item["ticker"]
-          }));
-        }
-        this.isloading=false;
-      })
+
+  navi(): void {
+    if (this.ticker) {
+      this.router.navigate(['/details', this.ticker]);
     }
-    else
-    {
-      this.isloading=false;
-      this.options=[]
-    }
+  }
+
+  private suggest(query: string): Observable<SearchResult[]> {
+    return query ? this.api.search(query).pipe(catchError(() => of([]))) : of([]);
   }
 }

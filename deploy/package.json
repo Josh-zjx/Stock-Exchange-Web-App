@@ -1,16 +1,15 @@
 {
-  "name": "deploy",
-  "version": "1.0.0",
-  "description": "",
+  "name": "stock-exchange-web-app-deploy",
+  "private": true,
+  "description": "App Engine bundle assembled by `npm run bundle` in the repository root",
   "main": "app.js",
+  "engines": {
+    "node": ">=20.12"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^5.1.0"
   }
 }

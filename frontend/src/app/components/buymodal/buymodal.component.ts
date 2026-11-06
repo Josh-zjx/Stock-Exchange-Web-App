@@ -1,42 +1,40 @@
-import { Component, OnInit,OnDestroy,Input,Output,EventEmitter} from '@angular/core';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { order } from '../../models/portfoliodata'
-import {Subject,Observable,Subscription} from 'rxjs'
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Observable, Subscription } from 'rxjs';
+import { Order } from '../../models/order';
 
+/** Closes with the confirmed {@link Order}. */
 @Component({
   selector: 'app-buymodal',
   templateUrl: './buymodal.component.html',
   styleUrls: ['./buymodal.component.css']
 })
-export class BuymodalComponent implements OnInit {
-  @Input() name:string;
-  @Input() price:number;
-  @Output() buyemitter = new EventEmitter();
-  @Input() updateevent:Observable<number>;
-  neworder:order={name:"",price:0,amount:0};
-  numb:number=0;
-  private Subscription: Subscription;
+export class BuymodalComponent implements OnInit, OnDestroy {
+  @Input() name: string;
+  @Input() price: number;
+  /** Live price updates while the dialog is open. */
+  @Input() updateevent: Observable<number>;
+  numb = 0;
+  private subscription: Subscription;
+
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
-    this.Subscription=this.updateevent.subscribe((data)=>{
-      this.price = data
-    })
+    this.subscription = this.updateevent.subscribe(price => this.price = price);
   }
-  ngOnDestroy():void{
-    this.Subscription.unsubscribe()
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
-  disablebuy():boolean{
-    return this.numb<=0;
+
+  disablebuy(): boolean {
+    return this.numb <= 0;
   }
-  buy():void{
-    if(this.disablebuy())
-    {return ;}
-    this.neworder.name=this.name;
-    this.neworder.price=this.price;
-    this.neworder.amount=Number(this.numb);
-    //console.log(typeof(this.numb))
-    this.buyemitter.emit(this.neworder);
-    this.activeModal.close('Close click')
+
+  buy(): void {
+    if (!this.disablebuy()) {
+      const order: Order = { name: this.name, price: this.price, amount: Number(this.numb) };
+      this.activeModal.close(order);
+    }
   }
 }
