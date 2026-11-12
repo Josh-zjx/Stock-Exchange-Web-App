@@ -18,6 +18,6 @@
     </div>
     -->
     <div *ngIf="!isloading">
-    <app-watch-list-item  *ngFor="let item of watchlistitems" [item]="item" (deleteitem)="deleteitem($event)"></app-watch-list-item>
+    <app-watch-list-item  *ngFor="let item of watchlistitems; trackBy: trackTicker" [item]="item" (deleteitem)="deleteitem($event)"></app-watch-list-item>
     </div>
 </div>

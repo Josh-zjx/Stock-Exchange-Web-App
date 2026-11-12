@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as Highcharts from 'highcharts/highstock';
-import { concat, EMPTY, forkJoin, noop, Observable, of, Subject, timer } from 'rxjs';
+import { concat, EMPTY, forkJoin, merge, noop, Observable, of, Subject, timer } from 'rxjs';
 import { catchError, exhaustMap, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { Order } from '../../models/order';
 import { CompanyMeta, dayChange, PricePoint, Quote } from '../../models/stock';
@@ -12,6 +12,7 @@ import { WatchlistdataService } from '../../services/watchlistdata.service';
 import { BuymodalComponent } from '../buymodal/buymodal.component';
 
 const REFRESH_INTERVAL = 15000;
+const INTRADAY_REFRESH_INTERVAL = 60000;
 // A quote older than this means trading has stopped
 const MARKET_CLOSED_AFTER = 60000;
 const ALERT_DURATION = 5000;
@@ -100,6 +101,7 @@ export class DetailsPageComponent implements OnInit, OnDestroy {
   showbuy = false;
   inwatchlist = false;
   marketopen = false;
+  newsActivated = false;
   now: Date;
   closedtime: Date;
   detaildesc: DetailDesc = { ticker: '', name: '', exchangecode: '', description: '', startdate: '' };
@@ -172,9 +174,11 @@ export class DetailsPageComponent implements OnInit, OnDestroy {
   }
 
   /** Shows a ticker, then keeps its quote and intraday chart fresh while the market is open. */
-  private track(ticker: string): Observable<PricePoint[]> {
+  private track(ticker: string): Observable<Quote | PricePoint[]> {
     this.ticker = ticker;
     this.isloading = true;
+    this.marketopen = false;
+    this.newsActivated = false;
     this.chartOptions = intradayChartOptions();
 
     const firstQuote = forkJoin([this.api.meta(ticker), this.api.quote(ticker)]).pipe(
@@ -185,16 +189,21 @@ export class DetailsPageComponent implements OnInit, OnDestroy {
       filter(() => this.marketopen),
       exhaustMap(() => this.api.quote(ticker).pipe(catchError(() => EMPTY)))
     );
-    return concat(firstQuote, laterQuotes).pipe(
+    const quotes = concat(firstQuote, laterQuotes).pipe(
       tap(quote => this.showQuote(quote)),
-      filter(quote => quote !== undefined),
-      switchMap(() => this.api.intraday(ticker).pipe(catchError(() => of([])))),
-      tap(points => this.showIntraday(points)),
       catchError(() => {
         this.showQuote(undefined);
         return EMPTY;
       })
     );
+    const intraday = concat(
+      this.api.intraday(ticker).pipe(catchError(() => of([]))),
+      timer(INTRADAY_REFRESH_INTERVAL, INTRADAY_REFRESH_INTERVAL).pipe(
+        filter(() => this.isvalid && this.marketopen),
+        exhaustMap(() => this.api.intraday(ticker).pipe(catchError(() => of([]))))
+      )
+    ).pipe(tap(points => this.showIntraday(points)));
+    return merge(quotes, intraday);
   }
 
   private showMeta(meta: CompanyMeta): void {
@@ -239,15 +248,23 @@ export class DetailsPageComponent implements OnInit, OnDestroy {
     }
     this.inwatchlist = this.watchlist.has(this.ticker);
     this.prices.next(quote.last);
+    this.showIntraday(this.chartOptions.series[0].data);
   }
 
   private showIntraday(points: PricePoint[]): void {
     const [series] = this.chartOptions.series;
+    const color = this.detailclose.change > 0 ? 'green' : 'red';
+    const samePoints = points.length === series.data.length && points.every((point, i) =>
+      point[0] === series.data[i][0] && point[1] === series.data[i][1]);
+    const sameStyle = !points.length || (series.name === this.ticker && series.color === color);
+    if (samePoints && sameStyle) {
+      return;
+    }
     series.data = points;
     if (points.length) {
       this.chartOptions.title.text = this.ticker;
       series.name = this.ticker;
-      series.color = this.detailclose.change > 0 ? 'green' : 'red';
+      series.color = color;
     }
     this.updatechart = true;
   }

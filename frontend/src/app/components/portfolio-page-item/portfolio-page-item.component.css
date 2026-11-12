@@ -1,0 +1,4 @@
+/* Let the wrapper receive hover events for the unavailable-price tooltip. */
+button:disabled {
+  pointer-events: none;
+}

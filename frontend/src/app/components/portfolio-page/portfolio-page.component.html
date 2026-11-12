@@ -19,6 +19,6 @@
     </div>
     -->
     <div *ngIf="!isloading">
-    <app-portfolio-page-item *ngFor="let item of Portfolio" [item]="item" (buyemitter)="buy($event)" (sellemitter)="sell($event)"  ></app-portfolio-page-item>
+    <app-portfolio-page-item *ngFor="let item of Portfolio; trackBy: trackTicker" [item]="item" (buyemitter)="buy($event)" (sellemitter)="sell($event)"  ></app-portfolio-page-item>
 </div>
 </div>

@@ -18,6 +18,7 @@ export interface NewsItem {
 })
 export class NewsItemComponent {
   @Input() news: NewsItem;
+  @Input() eagerImage = false;
 
   constructor(private modalService: NgbModal) { }
 

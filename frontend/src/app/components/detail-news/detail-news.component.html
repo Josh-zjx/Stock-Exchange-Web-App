@@ -2,12 +2,12 @@
     <div class="row">
         <div class="col-md">
             <ul class="list-group">
-                <app-news-item *ngFor="let item of newslist1"  [news]="item"></app-news-item>
+                <app-news-item *ngFor="let item of newslist1; let i = index" [eagerImage]="i === 0" [news]="item"></app-news-item>
             </ul>
         </div>
         <div class="col-md">
             <ul class="list-group">
-                <app-news-item *ngFor="let item of newslist2"  [news]="item"></app-news-item>
+                <app-news-item *ngFor="let item of newslist2; let i = index" [eagerImage]="i === 0" [news]="item"></app-news-item>
             </ul>
         </div>
     

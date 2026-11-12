@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { combineLatest, Observable, of } from 'rxjs';
+import { catchError, map, startWith } from 'rxjs/operators';
 import { Candle, CompanyMeta, NewsArticle, PricePoint, Quote, SearchResult } from '../models/stock';
 
 @Injectable({
@@ -16,19 +16,23 @@ export class StockApiService {
     return this.http.get<CompanyMeta>(this.stockUrl(ticker));
   }
 
-  /** Names and latest quotes for several tickers; whatever cannot be fetched is left out. */
-  overview(tickers: string[]): Observable<{ names: string[], quotes: Map<string, Quote> }> {
-    return forkJoin({
-      names: this.names(tickers),
-      quotes: this.quotes(tickers).pipe(catchError(() => of(new Map<string, Quote>())))
-    });
+  /** Emits quotes without waiting for names, then updates names as metadata arrives. */
+  overview(tickers: string[]): Observable<{ names: (string | undefined)[], quotes: Map<string, Quote> }> {
+    return combineLatest([
+      this.names(tickers),
+      this.quotes(tickers).pipe(catchError(() => of(new Map<string, Quote>())))
+    ]).pipe(map(([names, quotes]) => ({ names, quotes })));
   }
 
-  /** Company names in the order given; a name that cannot be fetched is left blank. */
-  names(tickers: string[]): Observable<string[]> {
-    return forkJoin(tickers.map(ticker => this.meta(ticker).pipe(
-      map(meta => meta.name),
-      catchError(() => of(''))
+  /** Names in ticker order: undefined while loading, blank when unavailable. */
+  names(tickers: string[]): Observable<(string | undefined)[]> {
+    if (!tickers.length) {
+      return of([]);
+    }
+    return combineLatest(tickers.map(ticker => this.meta(ticker).pipe(
+      map(meta => meta.name || ''),
+      catchError(() => of('')),
+      startWith(undefined)
     )));
   }
 
