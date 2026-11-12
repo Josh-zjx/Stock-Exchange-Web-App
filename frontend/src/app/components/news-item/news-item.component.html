@@ -4,7 +4,7 @@
             <div class="row">
             <div class="col-lg-3">
 
-    <img src={{this.news.image}} class="rounded img-fluid float-left" alt="Responsive image" style="padding:0px;">
+    <img [src]="news.image" [attr.loading]="eagerImage ? 'eager' : 'lazy'" decoding="async" class="rounded img-fluid float-left" [attr.alt]="news.title || 'News image'" style="padding:0px;">
             </div>
             <div class="col-lg-9 mr-auto"><p>{{this.news.title}}</p></div>
         </div>

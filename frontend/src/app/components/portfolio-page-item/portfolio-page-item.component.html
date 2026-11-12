@@ -5,7 +5,7 @@
       <div class="card-header" style="cursor: pointer;" (click)="navidetail(item)" >
         <h1 class="mt-auto mb-auto">
           {{item.ticker}}
-          <small class="text-muted">{{item.name}}</small>
+          <small class="text-muted">{{item.name === undefined ? 'Loading company name…' : item.name}}</small>
         </h1>
       </div>
       <div class="card-body" >
@@ -48,7 +48,11 @@
       </div>
       <div class="card-footer text-right">
           <div class="ml-auto">
-            <button class="btn btn-md btn-primary" (click)="openbuy()">Buy</button><button class="btn btn-md btn-danger" (click)="opensell()">Sell</button>
+            <span class="d-inline-block" [attr.title]="priceUnavailable ? 'Current price is not available.' : null">
+              <button class="btn btn-md" [class.btn-primary]="!priceUnavailable" [class.btn-secondary]="priceUnavailable" [disabled]="priceUnavailable" (click)="openbuy()">Buy</button>
+            </span><span class="d-inline-block" [attr.title]="priceUnavailable ? 'Current price is not available.' : null">
+              <button class="btn btn-md" [class.btn-danger]="!priceUnavailable" [class.btn-secondary]="priceUnavailable" [disabled]="priceUnavailable" (click)="opensell()">Sell</button>
+            </span>
           </div>
       </div>
     </div>

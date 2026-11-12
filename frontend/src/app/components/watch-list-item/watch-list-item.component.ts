@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 export interface WatchlistItem {
   ticker: string;
-  name: string;
+  name: string | undefined;
   change: number;
   currentprice: number;
   changepercent: number;

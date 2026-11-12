@@ -66,7 +66,7 @@
         </div>
     
     </div>
-<mat-tab-group mat-stretch-tabs mat-align-tabs="center" animationDuration="0ms">
+<mat-tab-group mat-stretch-tabs mat-align-tabs="center" animationDuration="0ms" (selectedIndexChange)="newsActivated = newsActivated || $event === 1">
     <mat-tab label="Summary">
         
         <div class="container">
@@ -138,7 +138,7 @@
     
         
         <!--<app-detail-summary [dailydata]="dailydata" [updatechart]="updatechart" [detailclose]="detailclose" [detailopen]="detailopen" [detaildesc]="detaildesc"></app-detail-summary>--> </mat-tab>
-    <mat-tab label="News"> <app-detail-news [ticker]="this.ticker"></app-detail-news> </mat-tab>
+    <mat-tab label="News"> <app-detail-news *ngIf="newsActivated" [ticker]="this.ticker"></app-detail-news> </mat-tab>
     <mat-tab label="Charts"> <ng-template matTabContent>
         <app-detail-chart [ticker]="this.ticker"></app-detail-chart></ng-template></mat-tab>
   </mat-tab-group>

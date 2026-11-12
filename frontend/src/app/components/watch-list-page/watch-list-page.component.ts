@@ -27,8 +27,13 @@ export class WatchListPageComponent implements OnInit {
       return;
     }
     this.isloading = true;
+    let items: WatchlistItem[];
     this.api.overview(tickers).subscribe(({ names, quotes }) => {
-      this.watchlistitems = tickers.map((ticker, i) => {
+      if (items) {
+        items.forEach((item, i) => item.name = names[i]);
+        return;
+      }
+      items = tickers.map((ticker, i) => {
         const quote = quotes.get(ticker);
         const change = quote ? dayChange(quote) : 0;
         return {
@@ -39,12 +44,17 @@ export class WatchListPageComponent implements OnInit {
           changepercent: quote ? change / quote.prevClose : 0
         };
       });
+      this.watchlistitems = items;
       this.isloading = false;
     });
   }
 
   deleteitem(ticker: string): void {
     this.watchlist.remove(ticker);
-    this.getWatchList();
+    this.watchlistitems = this.watchlistitems.filter(item => item.ticker !== ticker);
+  }
+
+  trackTicker(index: number, item: WatchlistItem): string {
+    return item.ticker;
   }
 }

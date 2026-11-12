@@ -8,7 +8,7 @@ import { SellmodalComponent } from '../sellmodal/sellmodal.component';
 
 export interface PortfolioItem {
   ticker: string;
-  name: string;
+  name: string | undefined;
   Quantity: number;
   averagecost: number;
   totalcost: number;
@@ -29,7 +29,14 @@ export class PortfolioPageItemComponent {
 
   constructor(private modalService: NgbModal, private router: Router) { }
 
+  get priceUnavailable(): boolean {
+    return !Number.isFinite(this.item.currentprice) || this.item.currentprice <= 0;
+  }
+
   openbuy(): void {
+    if (this.priceUnavailable) {
+      return;
+    }
     const modal = this.modalService.open(BuymodalComponent);
     Object.assign(modal.componentInstance, {
       name: this.item.ticker,
@@ -40,6 +47,9 @@ export class PortfolioPageItemComponent {
   }
 
   opensell(): void {
+    if (this.priceUnavailable) {
+      return;
+    }
     const modal = this.modalService.open(SellmodalComponent);
     Object.assign(modal.componentInstance, {
       name: this.item.ticker,
